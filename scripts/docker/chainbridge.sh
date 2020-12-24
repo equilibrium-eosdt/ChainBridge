@@ -7,5 +7,4 @@ export PATH=$PATH:/root/go/bin
 chainbridge \
     --config /root/config.json \
     --verbosity info \
-    --testkey alice \
     --latest
