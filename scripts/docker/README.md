@@ -58,12 +58,12 @@ docker run --name chainbridge0 --network host chainbridge0
 
 ```ChainBridge``` требует наличия ключей для подписывания и отправки транзакций, а также для идентификации.
 
-Как использовать ключи: ```chainbridge accounts --help```.
+Как работать с ключами: ```chainbridge accounts --help```.
 
 Пароль для keystore может быть передан через переменную окружения ```KEYSTORE_PASSWORD```.
 
-Чтобы импортировать внешние ключи Ethereum, нужно использовать команду
+Импортировать внешние ключи Ethereum:
 ```chainbridge accounts import --ethereum /path/to/key```.
 
-Чтобы импортировать в keystore секретный ключ, нужно использовать команду
+Импортировать в keystore секретный ключ:
 ```chainbridge account import --privateKey key```.
