@@ -43,7 +43,7 @@ docker run --name chainbridge0 --network host chainbridge0
 "erc20Handler": "0x...",
 "genericHandler": "0x...",
 ```
-- Путь к каталогу keystore (указывается в скрипте ```chainbridge.sh```)
+- Путь к каталогу keystore (указывается в скрипте ```chainbridge.sh```); подробнее в секции "Keystore"
 - Путь к каталогу blockstore (указывается в скрипте ```chainbridge.sh```); не нужен, если запускать с опцией ```--latest```
 
 Кроме того, каждый инстанс должен иметь свою, отличную от других,
@@ -53,3 +53,17 @@ docker run --name chainbridge0 --network host chainbridge0
 "from": "0x...",
 "from": "0x...",
 ```
+
+### Keystore
+
+```ChainBridge``` требует наличия ключей для подписывания и отправки транзакций, а также для идентификации.
+
+Как использовать ключи: ```chainbridge accounts --help```.
+
+Пароль для keystore может быть передан через переменную окружения ```KEYSTORE_PASSWORD```.
+
+Чтобы импортировать внешние ключи Ethereum, нужно использовать команду
+```chainbridge accounts import --ethereum /path/to/key```.
+
+Чтобы импортировать в keystore секретный ключ, нужно использовать команду
+```chainbridge account import --privateKey key```.
