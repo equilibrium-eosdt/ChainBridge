@@ -27,3 +27,25 @@ docker build --force-rm --file Dockerfile.chainbridge --tag chainbridge0 .
 ### Запуск контейнера
 
 docker run --name chainbridge0 --network host chainbridge0
+
+### Конфигурация
+
+Общая:
+
+- Эндпоинты нод сетей Substrate и Ethereum (указываются в config.json)
+- Адреса смарт-контрактов сети Ethereum, обеспечивающих обмен (указываются в config.json):
+```
+"bridge": "0x...",
+"erc20Handler": "0x...",
+"genericHandler": "0x...",
+```
+- Путь к каталогу keystore (указывается в скрипте chainbridge.sh)
+- Путь к каталогу blockstore (указывается в скрипте chainbridge.sh)
+
+Кроме того, каждый инстанс должен иметь свою, отличную от других,
+конфигурацию: адреса двух аккаунтов (по одному на каждую сеть), между
+которыми происходит обмен  (указываются в config.json):
+```
+"from": "0x...",
+"from": "0x...",
+```
