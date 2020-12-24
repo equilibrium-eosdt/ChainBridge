@@ -1,0 +1,26 @@
+FROM parity/subkey
+# ChainBridge uses the subkey utility to sign things
+
+MAINTAINER Equilibrium <team@equilibrium.io>
+
+USER root
+WORKDIR /root
+
+RUN apt-get update && \
+    apt-get install -y wget git gcc
+
+RUN wget -q https://dl.google.com/go/go1.13.15.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go1.13.15.linux-amd64.tar.gz
+
+#COPY debug-ChainBridge ChainBridge
+RUN export PATH=$PATH:/usr/local/go/bin && \
+    git clone --branch eq https://github.com/equilibrium-eosdt/ChainBridge.git && \
+    cd ChainBridge/cmd/chainbridge && \
+    go install
+
+COPY config.json config.json
+COPY chainbridge.sh entrypoint.sh
+
+RUN chmod +x /root/entrypoint.sh
+
+ENTRYPOINT ["/root/entrypoint.sh"]
