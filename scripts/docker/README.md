@@ -17,7 +17,7 @@ scripts/docker:
 
 - chainbridge.sh
 - config.json
-- Dockerfile.chainbridg
+- Dockerfile.chainbridge
 
 ### Установка: построение Docker-образа
 
