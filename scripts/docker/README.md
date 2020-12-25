@@ -73,6 +73,9 @@ docker run --name chainbridge0 --network host chainbridge0
 Импортировать в keystore секретный ключ:
 ```chainbridge account import --privateKey key```.
 
+Пока решили так, что каждый отдельный инстанс релея будет иметь свой
+уникальный keystore.
+
 ### Поддержка конфигураций, образов и запущенных контейнеров
 
 Поскольку каждой конфигурации соответствует свой image, необходимо
