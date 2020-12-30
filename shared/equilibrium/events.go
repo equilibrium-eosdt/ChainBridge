@@ -45,3 +45,20 @@ type EventOracleNewPrice struct {
 	AccountId types.AccountID
 	Topics    []types.Hash
 }
+
+type SubAccType byte
+
+type EventSubaccountsSubaccountCreated struct {
+	Phase      types.Phase
+	AccountId1 types.AccountID
+	AccountId2 types.AccountID
+	SubAccType SubAccType
+	Topics     []types.Hash
+}
+
+type EventSubaccountsRegisterBailsman struct {
+	Phase     types.Phase
+	AccountId1 types.AccountID
+	AccountId2 types.AccountID
+	Topics    []types.Hash
+}
