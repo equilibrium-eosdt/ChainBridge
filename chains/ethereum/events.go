@@ -4,6 +4,8 @@
 package ethereum
 
 import (
+	"math/big"
+
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
@@ -17,11 +19,15 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 		return msg.Message{}, err
 	}
 
+	factor := big.NewInt(1000000000)
+	amount := record.Amount
+	amount = amount.Div(amount, factor)
+
 	return msg.NewFungibleTransfer(
 		l.cfg.id,
 		destId,
 		nonce,
-		record.Amount,
+		amount,
 		record.ResourceID,
 		record.DestinationRecipientAddress,
 	), nil
