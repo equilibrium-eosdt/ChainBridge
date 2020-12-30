@@ -150,4 +150,5 @@ type Events struct {
 	MultiAccount_MultisigCancelled   []EventMultisigCancelled              // nolint:stylecheck,golint
 	TreasuryReward_TreasuryMinting 	 []EventTreasuryMinting		           // nolint:stylecheck,golint
 	Balances_Transfer                []equilibrium.EventBalancesTransfer   // nolint:stylecheck,golint
+	Oracle_NewPrice                  []equilibrium.EventOracleNewPrice
 }

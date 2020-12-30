@@ -17,7 +17,7 @@ const (
 
 /// Describes the reason for a transfer.
 type Reason byte
-const(
+const (
 	Common                 Reason = 0
 	InterestFee            Reason = 1
 	MarginCall             Reason = 2
@@ -35,4 +35,13 @@ type EventBalancesTransfer struct {
 	Value    types.U64
 	Reason   Reason
 	Topics   []types.Hash
+}
+
+type EventOracleNewPrice struct {
+	Phase     types.Phase
+	Currency  Currency
+	MedPrice  types.U64
+	NewPrice  types.U64
+	AccountId types.AccountID
+	Topics    []types.Hash
 }
