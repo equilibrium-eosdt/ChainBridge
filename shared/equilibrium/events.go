@@ -57,8 +57,8 @@ type EventSubaccountsSubaccountCreated struct {
 }
 
 type EventSubaccountsRegisterBailsman struct {
-	Phase     types.Phase
+	Phase      types.Phase
 	AccountId1 types.AccountID
 	AccountId2 types.AccountID
-	Topics    []types.Hash
+	Topics     []types.Hash
 }

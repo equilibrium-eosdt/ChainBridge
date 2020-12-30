@@ -151,6 +151,6 @@ type Events struct {
 	TreasuryReward_TreasuryMinting 	 []EventTreasuryMinting		           // nolint:stylecheck,golint
 	Balances_Transfer                []equilibrium.EventBalancesTransfer   // nolint:stylecheck,golint
 	Oracle_NewPrice                  []equilibrium.EventOracleNewPrice     // nolint:stylecheck,golint
-	Subaccounts_SubaccountCreated    []equilibrium.EventSubaccountsSubaccountCreated     // nolint:stylecheck,golint
-	Subaccounts_RegisterBailsman     []equilibrium.EventSubaccountsRegisterBailsman     // nolint:stylecheck,golint
+	Subaccounts_SubaccountCreated    []equilibrium.EventSubaccountsSubaccountCreated // nolint:stylecheck,golint
+	Subaccounts_RegisterBailsman     []equilibrium.EventSubaccountsRegisterBailsman  // nolint:stylecheck,golint
 }
