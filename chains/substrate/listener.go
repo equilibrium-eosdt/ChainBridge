@@ -211,11 +211,10 @@ func (l *listener) handleEvents(evts utils.Events) {
 	if l.subscriptions[FungibleTransfer] != nil {
 		for _, evt := range evts.ChainBridge_FungibleTransfer {
 			l.log.Trace("Handling FungibleTransfer event")
-			amount := big.NewInt(int64(evt.Amount.Uint64()))
 			factor := big.NewInt(1000000000)
-			mul := big.NewInt(0)
-			mul = mul.Mul(amount, factor)
-			evt.Amount = types.NewU256(*mul)
+			amount := evt.Amount.Int
+		    amount = amount.Mul(amount, factor)
+			evt.Amount = types.NewU256(*amount)
 			l.submitMessage(l.subscriptions[FungibleTransfer](evt, l.log))
 		}
 	}
