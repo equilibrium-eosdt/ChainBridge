@@ -22,6 +22,7 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	factor := big.NewInt(1000000000)
 	amount := record.Amount
 	amount = amount.Div(amount, factor)
+	println("events amount:", amount)
 
 	return msg.NewFungibleTransfer(
 		l.cfg.id,
