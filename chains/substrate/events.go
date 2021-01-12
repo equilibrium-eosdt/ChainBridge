@@ -5,11 +5,14 @@ package substrate
 
 import (
 	"fmt"
+	stdlog "log"
 	"math/big"
 
 	events "github.com/ChainSafe/chainbridge-substrate-events"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ChainSafe/log15"
+
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 )
 
 type eventName string
@@ -36,6 +39,8 @@ func fungibleTransferHandler(evtI interface{}, log log15.Logger) (msg.Message, e
 
 	resourceId := msg.ResourceId(evt.ResourceId)
 	log.Info("Got fungible transfer event!", "destination", evt.Destination, "resourceId", resourceId.Hex(), "amount", evt.Amount)
+	stdlog.Printf(equilibrium.LoggerPrefix+"Got fungible transfer event! dst=%v rId=%v amount=%v",
+		evt.Destination, resourceId.Hex(), evt.Amount)
 
 	return msg.NewFungibleTransfer(
 		0, // Unset

@@ -6,10 +6,12 @@ package substrate
 import (
 	"errors"
 	"fmt"
+	stdlog "log"
 	"math/big"
 	"time"
 
 	"github.com/ChainSafe/ChainBridge/chains"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
@@ -211,9 +213,10 @@ func (l *listener) handleEvents(evts utils.Events) {
 	if l.subscriptions[FungibleTransfer] != nil {
 		for _, evt := range evts.ChainBridge_FungibleTransfer {
 			l.log.Trace("Handling FungibleTransfer event")
+			stdlog.Printf(equilibrium.LoggerPrefix + "Handling FungibleTransfer event")
 			factor := big.NewInt(1000000000)
 			amount := evt.Amount.Int
-		    amount = amount.Mul(amount, factor)
+			amount = amount.Mul(amount, factor)
 			evt.Amount = types.NewU256(*amount)
 			l.submitMessage(l.subscriptions[FungibleTransfer](evt, l.log))
 		}
@@ -249,6 +252,6 @@ func (l *listener) submitMessage(m msg.Message, err error) {
 	m.Source = l.chainId
 	err = l.router.Send(m)
 	if err != nil {
-		log15.Error("failed to process event", "err", err)
+		log15.Error("Failed to process event", "err", err)
 	}
 }

@@ -96,3 +96,11 @@ var (
 		Usage: "Applies a predetermined test keystore to the chains.",
 	}
 )
+
+// Graylog flag
+var (
+	GraylogEndpointFlag = &cli.StringFlag{
+		Name:  "graylog",
+		Usage: "Graylog server endpoint (example: --graylog gl.oxygen-dev.net:12201)",
+	}
+)

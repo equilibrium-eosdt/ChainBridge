@@ -16,4 +16,5 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
+	gopkg.in/Graylog2/go-gelf.v2 v2.0.0-20191017102106-1550ee647df0
 )

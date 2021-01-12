@@ -10,13 +10,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	stdlog "log"
 	"net/http"
 	"os"
 	"strconv"
 
-	"github.com/ChainSafe/ChainBridge/chains/ethereum"
-	"github.com/ChainSafe/ChainBridge/chains/substrate"
-	"github.com/ChainSafe/ChainBridge/config"
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/metrics/health"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
@@ -24,6 +22,12 @@ import (
 	log "github.com/ChainSafe/log15"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/urfave/cli/v2"
+	"gopkg.in/Graylog2/go-gelf.v2/gelf"
+
+	"github.com/ChainSafe/ChainBridge/chains/ethereum"
+	"github.com/ChainSafe/ChainBridge/chains/substrate"
+	"github.com/ChainSafe/ChainBridge/config"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 )
 
 var app = cli.NewApp()
@@ -48,6 +52,10 @@ var generateFlags = []cli.Flag{
 
 var devFlags = []cli.Flag{
 	config.TestKeyFlag,
+}
+
+var logFlags = []cli.Flag{
+	config.GraylogEndpointFlag,
 }
 
 var importFlags = []cli.Flag{
@@ -111,6 +119,7 @@ func init() {
 
 	app.Flags = append(app.Flags, cliFlags...)
 	app.Flags = append(app.Flags, devFlags...)
+	app.Flags = append(app.Flags, logFlags...)
 }
 
 func main() {
@@ -132,6 +141,19 @@ func startLogger(ctx *cli.Context) error {
 	}
 	log.Root().SetHandler(log.LvlFilterHandler(lvl, handler))
 
+	graylogAddr := ctx.String(config.GraylogEndpointFlag.Name)
+	if graylogAddr != "" {
+		gelfWriter, err := gelf.NewTCPWriter(graylogAddr)
+		if err != nil {
+			stdlog.Fatalf("gelf.NewWriter: %s", err)
+		}
+		// Don't prefix messages with a redundant timestamp etc.
+		stdlog.SetFlags(0)
+		//log to both stderr and graylog2
+		//stdlog.SetOutput(io.MultiWriter(os.Stderr, gelfWriter))
+		stdlog.SetOutput(gelfWriter)
+	}
+
 	return nil
 }
 
@@ -141,7 +163,8 @@ func run(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Info("Starting ChainBridge...")
+	log.Info("Starting ChainBridge Relay...")
+	stdlog.Printf(equilibrium.LoggerPrefix + "Starting ChainBridge Relay...")
 
 	cfg, err := config.GetConfig(ctx)
 	if err != nil {

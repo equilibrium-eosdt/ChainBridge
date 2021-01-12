@@ -5,6 +5,7 @@ package substrate
 
 import (
 	"fmt"
+	stdlog "log"
 	"sync"
 
 	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
@@ -57,6 +58,8 @@ func (c *Connection) updateMetatdata() error {
 
 func (c *Connection) Connect() error {
 	c.log.Info("Connecting to substrate chain...", "url", c.url)
+	stdlog.Printf(equilibrium.LoggerPrefix+"Connecting to substrate chain... %v", c.url)
+
 	api, err := gsrpc.NewSubstrateAPI(c.url)
 	if err != nil {
 		return err
@@ -194,7 +197,7 @@ func printBinaryPayload(e *types.Extrinsic, signer signature.KeyringPair, o type
 
 	fmt.Printf("============== payload: %v\n", b)
 
-    return nil
+	return nil
 }
 
 func (c *Connection) watchSubmission(sub *author.ExtrinsicStatusSubscription) error {

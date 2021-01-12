@@ -6,9 +6,11 @@ package ethereum
 import (
 	"context"
 	"errors"
+	stdlog "log"
 	"math/big"
 	"time"
 
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	utils "github.com/ChainSafe/ChainBridge/shared/ethereum"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	log "github.com/ChainSafe/log15"
@@ -63,12 +65,16 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 	// Check if proposal has passed and skip if Passed or Transferred
 	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
+		stdlog.Printf(equilibrium.LoggerPrefix+"Proposal complete, not voting src=%v nonce=%v",
+			m.Source, m.DepositNonce)
 		return false
 	}
 
 	// Check if relayer has previously voted
 	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
+		stdlog.Printf(equilibrium.LoggerPrefix+"Relayer has already voted, not voting src=%v nonce=%v",
+			m.Source, m.DepositNonce)
 		return false
 	}
 
@@ -79,6 +85,8 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 // Returns true if the proposal is successfully created or is complete
 func (w *writer) createErc20Proposal(m msg.Message) bool {
 	w.log.Info("Creating erc20 proposal", "src", m.Source, "nonce", m.DepositNonce)
+	stdlog.Printf(equilibrium.LoggerPrefix+"Creating erc20 proposal src=%v nonce=%v",
+		m.Source, m.DepositNonce)
 
 	data := ConstructErc20ProposalData(m.Payload[0].([]byte), m.Payload[1].([]byte))
 	dataHash := utils.Hash(append(w.cfg.erc20HandlerContract.Bytes(), data...))
@@ -161,6 +169,8 @@ func (w *writer) createGenericDepositProposal(m msg.Message) bool {
 // watchThenExecute watches for the latest block and executes once the matching finalized event is found
 func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte, latestBlock *big.Int) {
 	w.log.Info("Watching for finalization event", "src", m.Source, "nonce", m.DepositNonce)
+	stdlog.Printf(equilibrium.LoggerPrefix+"Watching for finalization event src=%v nonce=%v",
+		m.Source, m.DepositNonce)
 
 	// watching for the latest block, querying and matching the finalized event will be retried up to ExecuteBlockWatchLimit times
 	for i := 0; i < ExecuteBlockWatchLimit; i++ {
@@ -212,6 +222,8 @@ func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte,
 		}
 	}
 	log.Warn("Block watch limit exceeded, skipping execution", "source", m.Source, "dest", m.Destination, "nonce", m.DepositNonce)
+	stdlog.Printf(equilibrium.LoggerPrefix+"Warning Block watch limit exceeded, skipping execution src=%v dst=%v nonce=%v",
+		m.Source, m.Destination, m.DepositNonce)
 }
 
 // voteProposal submits a vote proposal
@@ -239,6 +251,8 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 
 			if err == nil {
 				w.log.Info("Submitted proposal vote", "tx", tx.Hash(), "src", m.Source, "depositNonce", m.DepositNonce)
+				stdlog.Printf(equilibrium.LoggerPrefix+"Submitted proposal vote tx=%v src=%v nonce=%v",
+					tx.Hash(), m.Source, m.DepositNonce)
 				if w.metrics != nil {
 					w.metrics.VotesSubmitted.Inc()
 				}
@@ -254,6 +268,8 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			// Verify proposal is still open for voting, otherwise no need to retry
 			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal voting complete on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
+				stdlog.Printf(equilibrium.LoggerPrefix+"Proposal voting complete on chain src=%v dst=%v nonce=%v",
+					m.Source, m.Destination, m.DepositNonce)
 				return
 			}
 		}
@@ -286,6 +302,8 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 
 			if err == nil {
 				w.log.Info("Submitted proposal execution", "tx", tx.Hash(), "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
+				stdlog.Printf(equilibrium.LoggerPrefix+"Submitted proposal execution tx=%v src=%v dst=%v nonce=%v",
+					tx.Hash(), m.Source, m.Destination, m.DepositNonce)
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
 				w.log.Error("Nonce too low, will retry")
@@ -299,6 +317,8 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			// but there is no need to retry
 			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal finalized on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
+				stdlog.Printf(equilibrium.LoggerPrefix+"Proposal finalized on chain src=%v dst=%v nonce=%v",
+					m.Source, m.Destination, m.DepositNonce)
 				return
 			}
 		}

@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	stdlog "log"
 	"math/big"
 	"sync"
 	"time"
@@ -18,6 +19,8 @@ import (
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 )
 
 var BlockRetryInterval = time.Second * 5
@@ -54,6 +57,8 @@ func NewConnection(endpoint string, http bool, kp *secp256k1.Keypair, log log15.
 // Connect starts the ethereum WS connection
 func (c *Connection) Connect() error {
 	c.log.Info("Connecting to ethereum chain...", "url", c.endpoint)
+	stdlog.Printf(equilibrium.LoggerPrefix+"Connecting to ethereum chain... %v", c.endpoint)
+
 	var rpcClient *rpc.Client
 	var err error
 	// Start http or ws client

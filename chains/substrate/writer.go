@@ -7,10 +7,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	stdlog "log"
 	"time"
 
 	"github.com/ChainSafe/chainbridge-utils/core"
 
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
@@ -77,11 +79,14 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 		// If active submit call, otherwise skip it. Retry on failure.
 		if valid {
 			w.log.Trace("Acknowledging proposal on chain", "nonce", prop.depositNonce, "source", prop.sourceId, "resource", fmt.Sprintf("%x", prop.resourceId), "method", prop.method)
+			stdlog.Printf(equilibrium.LoggerPrefix+"Acknowledging proposal on chain nonce=%v src=%v rId=%v method=%v",
+				prop.depositNonce, prop.sourceId, fmt.Sprintf("%x", prop.resourceId), prop.method)
 			err = w.conn.SubmitTx(AcknowledgeProposal, prop.depositNonce, prop.sourceId, prop.resourceId, prop.call)
 			if err != nil && err.Error() == TerminatedError.Error() {
 				return false
 			} else if err != nil {
 				w.log.Error("Failed to execute extrinsic", "err", err)
+				stdlog.Printf(equilibrium.LoggerPrefix+"Failed to execute extrinsic: %v", err)
 				time.Sleep(BlockRetryInterval)
 				continue
 			}
