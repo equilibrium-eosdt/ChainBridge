@@ -143,12 +143,22 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 	for i := 0; i < N; i++ {
 		name := fmt.Sprintf("%v", ctx[i])
 		j := i + 1
+		_, _ = fmt.Fprintf(os.Stdout, "i=%v, j=%v, N=%v\n", i, j, N)
 		if j >= N {
 			_, _ = fmt.Fprintf(os.Stderr, "Uneven set of attributes '%v'\n", ctx)
 			break
 		}
 		value := ctx[j]
-		if name == "action" {
+		if name == "action" ||
+			name == "environment" ||
+			name == "source_chain" ||
+			name == "destination_chain" ||
+			name == "sender" ||
+			name == "recipient" ||
+			name == "value" ||
+			name == "token" ||
+			name == "nonce" ||
+			name == "block" {
 			attrs[name] = value
 		} else {
 			_, _ = fmt.Fprintf(os.Stderr, "Unsupported attribute '%s=%v'\n", name, value)
