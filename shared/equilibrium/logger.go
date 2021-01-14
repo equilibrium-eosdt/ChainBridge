@@ -144,7 +144,7 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 		_, _ = fmt.Fprintf(os.Stderr, "Uneven set of attributes '%v'\n", ctx)
 		return attrs
 	}
-	for i := 0; i < N-1; i++ {
+	for i := 0; i < N-1; i += 2 {
 		name := fmt.Sprintf("%v", ctx[i])
 		value := ctx[i+1]
 		_, _ = fmt.Fprintf(os.Stdout, "i=%v, name='%s', value='%v'\n", i, name, value)
