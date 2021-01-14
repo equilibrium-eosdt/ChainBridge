@@ -214,10 +214,9 @@ func (l *listener) handleEvents(evts utils.Events) {
 		for _, evt := range evts.ChainBridge_FungibleTransfer {
 			l.log.Trace("Handling FungibleTransfer event")
 			factor := big.NewInt(1000000000)
-			oldAmount := *evt.Amount.Int // deep copy
-			amount := evt.Amount.Int
-			amount = amount.Mul(amount, factor)
-			equilibrium.Info(fmt.Sprintf("Substrate transfer scaled value %v -> %v", &oldAmount, amount))
+			oldAmount := evt.Amount.Int.String()
+			amount := new(big.Int).Mul(evt.Amount.Int, factor)
+			equilibrium.Info(fmt.Sprintf("Substrate transfer scaled value %s -> %s", oldAmount, amount.String()))
 			evt.Amount = types.NewU256(*amount)
 			l.submitMessage(l.subscriptions[FungibleTransfer](evt, l.log))
 		}
