@@ -113,7 +113,7 @@ func newMessage(text string, ctx ...interface{}) *gelf.Message {
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 	}
-	attrs := newAttributes(ctx)
+	attrs := newAttributes(ctx...)
 	return &gelf.Message{
 		Version:  "1.1",
 		Host:     hostname,
