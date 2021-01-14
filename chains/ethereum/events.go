@@ -22,11 +22,12 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 		return msg.Message{}, err
 	}
 
+	oldAmount := *record.Amount // deep copy
 	factor := big.NewInt(1000000000)
 	amount := record.Amount
 	amount = amount.Div(amount, factor)
 
-	equilibrium.Info(fmt.Sprintf("ERC20 deposit scaled value %v -> %v", record.Amount, amount))
+	equilibrium.Info(fmt.Sprintf("ERC20 deposit scaled value %v -> %v", oldAmount, amount))
 
 	result := msg.NewFungibleTransfer(
 		l.cfg.id,
