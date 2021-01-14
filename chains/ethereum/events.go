@@ -4,6 +4,7 @@
 package ethereum
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/ChainSafe/chainbridge-utils/msg"
@@ -24,6 +25,8 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	factor := big.NewInt(1000000000)
 	amount := record.Amount
 	amount = amount.Div(amount, factor)
+
+	equilibrium.Info(fmt.Sprintf("ERC20 deposit scaled value %v -> %v", record.Amount, amount))
 
 	result := msg.NewFungibleTransfer(
 		l.cfg.id,

@@ -16,6 +16,7 @@ import (
 	"github.com/centrifuge/go-substrate-rpc-client/types"
 
 	"github.com/ChainSafe/ChainBridge/chains"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 )
 
@@ -215,6 +216,7 @@ func (l *listener) handleEvents(evts utils.Events) {
 			factor := big.NewInt(1000000000)
 			amount := evt.Amount.Int
 			amount = amount.Mul(amount, factor)
+			equilibrium.Info(fmt.Sprintf("Substrate transfer scaled value %v -> %v", evt.Amount.Int, amount))
 			evt.Amount = types.NewU256(*amount)
 			l.submitMessage(l.subscriptions[FungibleTransfer](evt, l.log))
 		}

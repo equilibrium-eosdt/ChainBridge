@@ -1,6 +1,7 @@
 package equilibrium
 
 import (
+	"encoding/hex"
 	"fmt"
 	"os"
 	"time"
@@ -67,8 +68,8 @@ func EventFungibleTransfer(text string, e events.EventFungibleTransfer) {
 	ctx = append(ctx, "action", msg.FungibleTransfer)
 	ctx = append(ctx, "destination_chain", e.Destination)
 	ctx = append(ctx, "nonce", e.DepositNonce)
-	ctx = append(ctx, "value", e.Amount)
-	ctx = append(ctx, "recipient", e.Recipient)
+	ctx = append(ctx, "value", e.Amount.Int)
+	ctx = append(ctx, "recipient", hex.EncodeToString(e.Recipient))
 	Info(text, ctx...)
 }
 
@@ -147,7 +148,7 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 	for i := 0; i < N-1; i += 2 {
 		name := fmt.Sprintf("%v", ctx[i])
 		value := ctx[i+1]
-		_, _ = fmt.Fprintf(os.Stdout, "i=%v, name='%s', value='%v'\n", i, name, value)
+		//_, _ = fmt.Fprintf(os.Stdout, "i=%v, name='%s', value='%v'\n", i, name, value)
 		_, supported := attrs[name]
 		if supported {
 			attrs[name] = value
