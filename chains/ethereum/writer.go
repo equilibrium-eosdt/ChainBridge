@@ -4,15 +4,13 @@
 package ethereum
 
 import (
-	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
-	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
-
-	stdlog "log"
-
 	"github.com/ChainSafe/chainbridge-utils/core"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ChainSafe/log15"
+
+	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 )
 
 var _ core.Writer = &writer{}
@@ -58,8 +56,7 @@ func (w *writer) setContract(bridge *Bridge.Bridge) {
 // A bool is returned to indicate failure/success, this should be ignored except for within tests.
 func (w *writer) ResolveMessage(m msg.Message) bool {
 	w.log.Info("Attempting to resolve message", "type", m.Type, "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce, "rId", m.ResourceId.Hex())
-	stdlog.Printf(equilibrium.LoggerPrefix+"Attempting to resolve message type=%v src=%v dst=%v nonce=%v rId=%v",
-		m.Type, m.Source, m.Destination, m.DepositNonce, m.ResourceId.Hex())
+	equilibrium.Message("Attempting to resolve message", m)
 
 	switch m.Type {
 	case msg.FungibleTransfer:

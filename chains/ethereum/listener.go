@@ -7,17 +7,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	stdlog "log"
 	"math/big"
 	"time"
 
-	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
-	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
-	"github.com/ChainSafe/ChainBridge/bindings/ERC721Handler"
-	"github.com/ChainSafe/ChainBridge/bindings/GenericHandler"
-	"github.com/ChainSafe/ChainBridge/chains"
-	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
-	utils "github.com/ChainSafe/ChainBridge/shared/ethereum"
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
@@ -25,6 +17,13 @@ import (
 	eth "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethcommon "github.com/ethereum/go-ethereum/common"
+
+	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
+	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
+	"github.com/ChainSafe/ChainBridge/bindings/ERC721Handler"
+	"github.com/ChainSafe/ChainBridge/bindings/GenericHandler"
+	"github.com/ChainSafe/ChainBridge/chains"
+	utils "github.com/ChainSafe/ChainBridge/shared/ethereum"
 )
 
 var BlockDelay = big.NewInt(10)
@@ -83,7 +82,6 @@ func (l *listener) start() error {
 		err := l.pollBlocks()
 		if err != nil {
 			l.log.Error("Polling blocks failed", "err", err)
-			stdlog.Printf(equilibrium.LoggerPrefix+"Polling blocks failed: %v", err)
 		}
 	}()
 
@@ -95,7 +93,6 @@ func (l *listener) start() error {
 // a block will be retried up to BlockRetryLimit times before continuing to the next block.
 func (l *listener) pollBlocks() error {
 	l.log.Info("Polling Blocks...")
-	stdlog.Printf(equilibrium.LoggerPrefix + "Polling Blocks...")
 
 	var currentBlock = l.cfg.startBlock
 	var retry = BlockRetryLimit

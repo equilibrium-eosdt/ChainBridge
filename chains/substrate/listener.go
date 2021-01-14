@@ -6,18 +6,17 @@ package substrate
 import (
 	"errors"
 	"fmt"
-	stdlog "log"
 	"math/big"
 	"time"
 
-	"github.com/ChainSafe/ChainBridge/chains"
-	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
-	utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ChainSafe/log15"
 	"github.com/centrifuge/go-substrate-rpc-client/types"
+
+	"github.com/ChainSafe/ChainBridge/chains"
+	utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 )
 
 type listener struct {
@@ -213,7 +212,6 @@ func (l *listener) handleEvents(evts utils.Events) {
 	if l.subscriptions[FungibleTransfer] != nil {
 		for _, evt := range evts.ChainBridge_FungibleTransfer {
 			l.log.Trace("Handling FungibleTransfer event")
-			stdlog.Printf(equilibrium.LoggerPrefix + "Handling FungibleTransfer event")
 			factor := big.NewInt(1000000000)
 			amount := evt.Amount.Int
 			amount = amount.Mul(amount, factor)

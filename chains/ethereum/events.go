@@ -4,7 +4,6 @@
 package ethereum
 
 import (
-	stdlog "log"
 	"math/big"
 
 	"github.com/ChainSafe/chainbridge-utils/msg"
@@ -15,13 +14,10 @@ import (
 
 func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce) (msg.Message, error) {
 	l.log.Info("Handling fungible deposit event", "dest", destId, "nonce", nonce)
-	stdlog.Printf(equilibrium.LoggerPrefix+"Handling fungible deposit event dst=%v nonce=%v",
-		destId, nonce)
 
 	record, err := l.erc20HandlerContract.GetDepositRecord(&bind.CallOpts{From: l.conn.Keypair().CommonAddress()}, uint64(nonce), uint8(destId))
 	if err != nil {
 		l.log.Error("Error Unpacking ERC20 Deposit Record", "err", err)
-		stdlog.Printf(equilibrium.LoggerPrefix+"Error Unpacking ERC20 Deposit Record: %v", err)
 		return msg.Message{}, err
 	}
 
@@ -29,14 +25,18 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	amount := record.Amount
 	amount = amount.Div(amount, factor)
 
-	return msg.NewFungibleTransfer(
+	result := msg.NewFungibleTransfer(
 		l.cfg.id,
 		destId,
 		nonce,
 		amount,
 		record.ResourceID,
 		record.DestinationRecipientAddress,
-	), nil
+	)
+
+	equilibrium.Message("Handling fungible deposit event", result)
+
+	return result, nil
 }
 
 func (l *listener) handleErc721DepositedEvent(destId msg.ChainId, nonce msg.Nonce) (msg.Message, error) {

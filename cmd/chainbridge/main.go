@@ -10,7 +10,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	stdlog "log"
 	"net/http"
 	"os"
 	"strconv"
@@ -158,7 +157,6 @@ func run(ctx *cli.Context) error {
 	}
 
 	log.Info("Starting ChainBridge Relay...")
-	stdlog.Printf(equilibrium.LoggerPrefix + "Starting ChainBridge Relay...")
 
 	cfg, err := config.GetConfig(ctx)
 	if err != nil {

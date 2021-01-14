@@ -5,13 +5,14 @@ import (
 	"os"
 	"time"
 
+	events "github.com/ChainSafe/chainbridge-substrate-events"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"gopkg.in/Graylog2/go-gelf.v2/gelf"
 )
 
 var logger *Logger
 
-const LoggerPrefix = "Equilibrium Bridge (Relay) "
+const loggerPrefix = "Equilibrium Bridge (Relay)"
 
 type Logger struct {
 	gelf *gelf.TCPWriter
@@ -37,24 +38,45 @@ func CreateGrayLogger(addr string) error {
 //  	Destination  ChainId      // Destination chain of message
 //  	Type         TransferType // type of bridge transfer
 //  	DepositNonce Nonce        // Nonce for the deposit
+//      ResourceId   ResourceId
+//      Payload      []interface{} // data associated with event sequence
 // }
-func Message(msg string, m msg.Message) {
+func Message(text string, m msg.Message) {
 	if logger == nil {
 		return
 	}
-	ctx := make([]interface{}, 0, 8)
+	ctx := make([]interface{}, 0)
 	ctx = append(ctx, "source_chain", m.Source)
 	ctx = append(ctx, "destination_chain", m.Destination)
 	ctx = append(ctx, "action", m.Type)
 	ctx = append(ctx, "nonce", m.DepositNonce)
-	Info(msg, ctx)
+	Info(text, ctx)
 }
 
-func Info(msg string, ctx ...interface{}) {
+// type EventFungibleTransfer struct {
+//  	Destination  types.U8
+//  	DepositNonce types.U64
+//  	Amount       types.U256
+//  	Recipient    types.Bytes
+// }
+func EventFungibleTransfer(text string, e events.EventFungibleTransfer) {
 	if logger == nil {
 		return
 	}
-	message := newMessage(msg, ctx...)
+	ctx := make([]interface{}, 0)
+	ctx = append(ctx, "action", msg.FungibleTransfer)
+	ctx = append(ctx, "destination_chain", e.Destination)
+	ctx = append(ctx, "nonce", e.DepositNonce)
+	ctx = append(ctx, "value", e.Amount)
+	ctx = append(ctx, "recipient", e.Recipient)
+	Info(text, ctx)
+}
+
+func Info(text string, ctx ...interface{}) {
+	if logger == nil {
+		return
+	}
+	message := newMessage(text, ctx...)
 	message.Level = gelf.LOG_INFO
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
@@ -62,11 +84,11 @@ func Info(msg string, ctx ...interface{}) {
 	}
 }
 
-func Warn(msg string, ctx ...interface{}) {
+func Warn(text string, ctx ...interface{}) {
 	if logger == nil {
 		return
 	}
-	message := newMessage(msg, ctx...)
+	message := newMessage(text, ctx...)
 	message.Level = gelf.LOG_WARNING
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
@@ -74,11 +96,11 @@ func Warn(msg string, ctx ...interface{}) {
 	}
 }
 
-func Error(msg string, ctx ...interface{}) {
+func Error(text string, ctx ...interface{}) {
 	if logger == nil {
 		return
 	}
-	message := newMessage(msg, ctx...)
+	message := newMessage(text, ctx...)
 	message.Level = gelf.LOG_ERR
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
@@ -86,7 +108,7 @@ func Error(msg string, ctx ...interface{}) {
 	}
 }
 
-func newMessage(msg string, ctx ...interface{}) *gelf.Message {
+func newMessage(text string, ctx ...interface{}) *gelf.Message {
 	hostname, err := os.Hostname()
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err.Error())
@@ -95,8 +117,8 @@ func newMessage(msg string, ctx ...interface{}) *gelf.Message {
 	return &gelf.Message{
 		Version:  "1.1",
 		Host:     hostname,
-		Short:    msg,
-		Full:     LoggerPrefix + msg,
+		Short:    text,
+		Full:     loggerPrefix + " " + text,
 		TimeUnix: float64(time.Now().UnixNano()) / float64(time.Second),
 		Level:    gelf.LOG_INFO,
 		Facility: "Equilibrium",
@@ -134,15 +156,3 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 	}
 	return attrs
 }
-
-// type Message struct {
-//  	Version  string                 `json:"version"`
-//  	Host     string                 `json:"host"`
-// 	    Short    string                 `json:"short_message"`
-//  	Full     string                 `json:"full_message,omitempty"`
-//  	TimeUnix float64                `json:"timestamp"`
-// 	    Level    int32                  `json:"level,omitempty"`
-// 	    Facility string                 `json:"facility,omitempty"`
-// 	    Extra    map[string]interface{} `json:"-"`
-// 	    RawExtra json.RawMessage        `json:"-"`
-// }
