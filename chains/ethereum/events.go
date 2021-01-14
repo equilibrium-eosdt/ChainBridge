@@ -27,7 +27,7 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	amount := record.Amount
 	amount = amount.Div(amount, factor)
 
-	equilibrium.Info(fmt.Sprintf("ERC20 deposit scaled value %v -> %v", oldAmount, amount))
+	equilibrium.Info(fmt.Sprintf("ERC20 deposit scaled value %v -> %v", &oldAmount, amount))
 
 	result := msg.NewFungibleTransfer(
 		l.cfg.id,

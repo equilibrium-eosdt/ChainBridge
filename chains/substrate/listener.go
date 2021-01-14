@@ -217,7 +217,7 @@ func (l *listener) handleEvents(evts utils.Events) {
 			oldAmount := *evt.Amount.Int // deep copy
 			amount := evt.Amount.Int
 			amount = amount.Mul(amount, factor)
-			equilibrium.Info(fmt.Sprintf("Substrate transfer scaled value %v -> %v", oldAmount, amount))
+			equilibrium.Info(fmt.Sprintf("Substrate transfer scaled value %v -> %v", &oldAmount, amount))
 			evt.Amount = types.NewU256(*amount)
 			l.submitMessage(l.subscriptions[FungibleTransfer](evt, l.log))
 		}
