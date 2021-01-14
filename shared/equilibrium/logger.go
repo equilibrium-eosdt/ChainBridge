@@ -50,7 +50,7 @@ func Message(text string, m msg.Message) {
 	ctx = append(ctx, "destination_chain", m.Destination)
 	ctx = append(ctx, "action", m.Type)
 	ctx = append(ctx, "nonce", m.DepositNonce)
-	Info(text, ctx)
+	Info(text, ctx...)
 }
 
 // type EventFungibleTransfer struct {
@@ -69,7 +69,7 @@ func EventFungibleTransfer(text string, e events.EventFungibleTransfer) {
 	ctx = append(ctx, "nonce", e.DepositNonce)
 	ctx = append(ctx, "value", e.Amount)
 	ctx = append(ctx, "recipient", e.Recipient)
-	Info(text, ctx)
+	Info(text, ctx...)
 }
 
 func Info(text string, ctx ...interface{}) {
@@ -149,16 +149,8 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 			break
 		}
 		value := ctx[j]
-		if name == "action" ||
-			name == "environment" ||
-			name == "source_chain" ||
-			name == "destination_chain" ||
-			name == "sender" ||
-			name == "recipient" ||
-			name == "value" ||
-			name == "token" ||
-			name == "nonce" ||
-			name == "block" {
+		_, supported := attrs[name]
+		if supported {
 			attrs[name] = value
 		} else {
 			_, _ = fmt.Fprintf(os.Stderr, "Unsupported attribute '%s=%v'\n", name, value)
