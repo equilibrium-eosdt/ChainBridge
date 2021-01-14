@@ -65,16 +65,14 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 	// Check if proposal has passed and skip if Passed or Transferred
 	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		stdlog.Printf(equilibrium.LoggerPrefix+"Proposal complete, not voting src=%v nonce=%v",
-			m.Source, m.DepositNonce)
+		equilibrium.Message("Proposal complete, not voting", m)
 		return false
 	}
 
 	// Check if relayer has previously voted
 	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		stdlog.Printf(equilibrium.LoggerPrefix+"Relayer has already voted, not voting src=%v nonce=%v",
-			m.Source, m.DepositNonce)
+		equilibrium.Message("Relayer has already voted, not voting", m)
 		return false
 	}
 

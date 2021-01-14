@@ -4,9 +4,6 @@ import (
 	"github.com/centrifuge/go-substrate-rpc-client/types"
 )
 
-// Prefix for Graylog messages
-const LoggerPrefix = "Equilibrium Bridge (Relay) "
-
 // AccountInfo contains information of an account.
 // This is simplified version of type AccountInfo
 // from go-substrate-rpc-client.

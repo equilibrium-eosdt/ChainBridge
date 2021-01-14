@@ -22,7 +22,6 @@ import (
 	log "github.com/ChainSafe/log15"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/urfave/cli/v2"
-	"gopkg.in/Graylog2/go-gelf.v2/gelf"
 
 	"github.com/ChainSafe/ChainBridge/chains/ethereum"
 	"github.com/ChainSafe/ChainBridge/chains/substrate"
@@ -143,15 +142,10 @@ func startLogger(ctx *cli.Context) error {
 
 	graylogAddr := ctx.String(config.GraylogEndpointFlag.Name)
 	if graylogAddr != "" {
-		gelfWriter, err := gelf.NewTCPWriter(graylogAddr)
+		err := equilibrium.CreateGrayLogger(graylogAddr)
 		if err != nil {
-			stdlog.Fatalf("gelf.NewWriter: %s", err)
+			return err
 		}
-		// Don't prefix messages with a redundant timestamp etc.
-		stdlog.SetFlags(0)
-		//log to both stderr and graylog2
-		//stdlog.SetOutput(io.MultiWriter(os.Stderr, gelfWriter))
-		stdlog.SetOutput(gelfWriter)
 	}
 
 	return nil
