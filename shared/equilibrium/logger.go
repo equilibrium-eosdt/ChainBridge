@@ -117,8 +117,8 @@ func newMessage(text string, ctx ...interface{}) *gelf.Message {
 	return &gelf.Message{
 		Version:  "1.1",
 		Host:     hostname,
-		Short:    text,
-		Full:     loggerPrefix + " " + text,
+		Short:    loggerPrefix + " " + text,
+		Full:     text,
 		TimeUnix: float64(time.Now().UnixNano()) / float64(time.Second),
 		Level:    gelf.LOG_INFO,
 		Facility: "Equilibrium",
