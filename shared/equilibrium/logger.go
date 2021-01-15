@@ -16,10 +16,11 @@ const loggerPrefix = "Equilibrium Bridge (Relay)"
 var logger *Logger
 
 type Logger struct {
-	gelf *gelf.TCPWriter
+	gelf        *gelf.TCPWriter
+	environment string
 }
 
-func CreateGrayLogger(addr string) error {
+func CreateGrayLogger(addr, environment string) error {
 	if logger != nil {
 		return fmt.Errorf("equilibrium logger already created")
 	}
@@ -28,9 +29,9 @@ func CreateGrayLogger(addr string) error {
 	if err != nil {
 		return err
 	}
-	gelfWriter.MaxReconnect = 10
+	gelfWriter.MaxReconnect = 10 // default: 3
 
-	logger = &Logger{gelfWriter}
+	logger = &Logger{gelfWriter, environment}
 
 	return nil
 }
@@ -153,7 +154,7 @@ func newMessage(text string, ctx ...interface{}) *gelf.Message {
 func newAttributes(ctx ...interface{}) map[string]interface{} {
 	attrs := map[string]interface{}{
 		"action":            nil,
-		"environment":       nil,
+		"environment":       logger.environment,
 		"source_chain":      nil,
 		"destination_chain": nil,
 		"sender":            nil,

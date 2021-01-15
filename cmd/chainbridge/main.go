@@ -127,7 +127,7 @@ func main() {
 	}
 }
 
-func startLogger(ctx *cli.Context) error {
+func startLogger(ctx *cli.Context, environment string) error {
 	logger := log.Root()
 	handler := logger.GetHandler()
 	var lvl log.Lvl
@@ -141,7 +141,7 @@ func startLogger(ctx *cli.Context) error {
 
 	graylogAddr := ctx.String(config.GraylogEndpointFlag.Name)
 	if graylogAddr != "" {
-		err := equilibrium.CreateGrayLogger(graylogAddr)
+		err := equilibrium.CreateGrayLogger(graylogAddr, environment)
 		if err != nil {
 			return err
 		}
@@ -151,17 +151,17 @@ func startLogger(ctx *cli.Context) error {
 }
 
 func run(ctx *cli.Context) error {
-	err := startLogger(ctx)
+	cfg, err := config.GetConfig(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = startLogger(ctx, cfg.Environment)
 	if err != nil {
 		return err
 	}
 
 	log.Info("Starting ChainBridge Relay...")
-
-	cfg, err := config.GetConfig(ctx)
-	if err != nil {
-		return err
-	}
 
 	// Check for test key flag
 	var ks string

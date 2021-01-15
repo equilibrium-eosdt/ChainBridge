@@ -19,6 +19,7 @@ const DefaultKeystorePath = "./keys"
 type Config struct {
 	Chains       []RawChainConfig `json:"chains"`
 	KeystorePath string           `json:"keystorePath,omitempty"`
+	Environment  string           `json:"environment,omitempty"`
 }
 
 // RawChainConfig is parsed directly from the config file and should be using to construct the core.ChainConfig
@@ -93,13 +94,11 @@ func GetConfig(ctx *cli.Context) (*Config, error) {
 	}
 	err := loadConfig(path, &fig)
 	if err != nil {
-		log.Warn("err loading json file", "err", err.Error())
 		return &fig, err
 	}
 	if ksPath := ctx.String(KeystorePathFlag.Name); ksPath != "" {
 		fig.KeystorePath = ksPath
 	}
-	log.Debug("Loaded config", "path", path)
 	err = fig.validate()
 	if err != nil {
 		return nil, err

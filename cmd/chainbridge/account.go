@@ -30,7 +30,7 @@ type dataHandler struct {
 func wrapHandler(hdl func(*cli.Context, *dataHandler) error) cli.ActionFunc {
 
 	return func(ctx *cli.Context) error {
-		err := startLogger(ctx)
+		err := startLogger(ctx, "local")
 		if err != nil {
 			return err
 		}
