@@ -66,7 +66,7 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 		return false
 	}
 
-	action := "E->S"
+	direction := "E->S"
 	for i := 0; i < BlockRetryLimit; i++ {
 		// Ensure we only submit a vote if the proposal hasn't completed
 		valid, reason, err := w.proposalValid(prop)
@@ -79,7 +79,7 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 		// If active submit call, otherwise skip it. Retry on failure.
 		if valid {
 			w.log.Trace("Acknowledging proposal on chain", "nonce", prop.depositNonce, "source", prop.sourceId, "resource", fmt.Sprintf("%x", prop.resourceId), "method", prop.method)
-			equilibrium.Message(action, fmt.Sprintf("(%s) SubmitTx AcknowledgeProposal", action), m)
+			equilibrium.Message("AcknowledgeProposal", fmt.Sprintf("(%s) SubmitTx AcknowledgeProposal", direction), m)
 			err = w.conn.SubmitTx(AcknowledgeProposal, prop.depositNonce, prop.sourceId, prop.resourceId, prop.call)
 			if err != nil && err.Error() == TerminatedError.Error() {
 				return false

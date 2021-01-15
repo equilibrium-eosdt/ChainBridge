@@ -26,10 +26,8 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	factor := big.NewInt(1000000000)
 	amount := new(big.Int).Div(record.Amount, factor)
 
-	action := "E->S"
-	ctx := make([]interface{}, 0)
-	ctx = append(ctx, "action", action)
-	equilibrium.Info(fmt.Sprintf("(%s) Scale value %s -> %s", action, oldAmount, amount.String()), ctx...)
+	direction := "E->S"
+	equilibrium.Info(fmt.Sprintf("(%s) Scale value %s -> %s", direction, oldAmount, amount.String()))
 
 	result := msg.NewFungibleTransfer(
 		l.cfg.id,
@@ -40,7 +38,7 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 		record.DestinationRecipientAddress,
 	)
 
-	equilibrium.Message(action, fmt.Sprintf("(%s) Handle Erc20DepositedEvent", action), result)
+	equilibrium.Message("EventFound", fmt.Sprintf("(%s) Handle Erc20DepositedEvent", direction), result)
 
 	return result, nil
 }

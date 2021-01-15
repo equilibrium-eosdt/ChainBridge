@@ -63,19 +63,20 @@ func (w *writer) hasVoted(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte)
 }
 
 func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
-	action := "S->E"
+	direction := "S->E"
+	action := "Info"
 
 	// Check if proposal has passed and skip if Passed or Transferred
 	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", action), m)
+		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", direction), m)
 		return false
 	}
 
 	// Check if relayer has previously voted
 	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", action), m)
+		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", direction), m)
 		return false
 	}
 
@@ -224,7 +225,7 @@ func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte,
 // voteProposal submits a vote proposal
 // a vote proposal will try to be submitted up to the TxRetryLimit times
 func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
-	action := "S->E"
+	direction := "S->E"
 	for i := 0; i < TxRetryLimit; i++ {
 		select {
 		case <-w.stop:
@@ -247,7 +248,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 
 			if err == nil {
 				w.log.Info("Submitted proposal vote", "tx", tx.Hash(), "src", m.Source, "depositNonce", m.DepositNonce)
-				equilibrium.Message(action, fmt.Sprintf("(%s) SubmitTx ProposalVote", action), m)
+				equilibrium.Message("ProposalVote", fmt.Sprintf("(%s) SubmitTx ProposalVote", direction), m)
 				if w.metrics != nil {
 					w.metrics.VotesSubmitted.Inc()
 				}
@@ -263,7 +264,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			// Verify proposal is still open for voting, otherwise no need to retry
 			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal voting complete on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message(action, fmt.Sprintf("(%s) Proposal voting complete on chain", action), m)
+				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal voting complete on chain", direction), m)
 				return
 			}
 		}
@@ -274,7 +275,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 
 // executeProposal executes the proposal
 func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) {
-	action := "S->E"
+	direction := "S->E"
 	for i := 0; i < TxRetryLimit; i++ {
 		select {
 		case <-w.stop:
@@ -297,7 +298,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 
 			if err == nil {
 				w.log.Info("Submitted proposal execution", "tx", tx.Hash(), "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message(action, fmt.Sprintf("(%s) SubmitTx ProposalExecute", action), m)
+				equilibrium.Message("ProposalExecute", fmt.Sprintf("(%s) SubmitTx ProposalExecute", direction), m)
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
 				w.log.Error("Nonce too low, will retry")
@@ -311,7 +312,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			// but there is no need to retry
 			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal finalized on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message(action, fmt.Sprintf("(%s) Proposal finalized on chain", action), m)
+				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal finalized on chain", direction), m)
 				return
 			}
 		}
