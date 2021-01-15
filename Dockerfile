@@ -15,7 +15,9 @@ COPY entrypoint.sh /
 RUN apt-get -y update && apt-get -y upgrade && apt-get install ca-certificates wget -y
 RUN wget -P /usr/local/bin/ https://chainbridge.ams3.digitaloceanspaces.com/subkey-rc6 \
   && mv /usr/local/bin/subkey-rc6 /usr/local/bin/subkey \
-  && chmod +x /usr/local/bin/subkey
+  && chmod +x /usr/local/bin/subkey \
+  && mkdir -p /etc/keys
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/bridge","--config","/etc/config.json","--verbosity","info","--latest"]
+EXPOSE 9880
+#CMD ["/usr/bin/bridge","--config","/etc/config.json","--verbosity","info","--latest"]
