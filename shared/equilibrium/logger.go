@@ -44,6 +44,7 @@ func CreateGrayLogger(addr string) error {
 // }
 func Message(text string, m msg.Message) {
 	if logger == nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
 	ctx := make([]interface{}, 0)
@@ -76,6 +77,7 @@ func Message(text string, m msg.Message) {
 // }
 func EventFungibleTransfer(text string, e events.EventFungibleTransfer) {
 	if logger == nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
 	ctx := make([]interface{}, 0)
@@ -89,44 +91,48 @@ func EventFungibleTransfer(text string, e events.EventFungibleTransfer) {
 
 func Info(text string, ctx ...interface{}) {
 	if logger == nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
 	message := newMessage(text, ctx...)
 	message.Level = gelf.LOG_INFO
+	_, _ = fmt.Fprintf(os.Stdout, "WriteMessage: %v\n", message)
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		_, _ = fmt.Fprintf(os.Stderr, "WriteMessage error: %s\n", err.Error())
 	}
 }
 
 func Warn(text string, ctx ...interface{}) {
 	if logger == nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
 	message := newMessage(text, ctx...)
 	message.Level = gelf.LOG_WARNING
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		_, _ = fmt.Fprintf(os.Stderr, "WriteMessage error: %s\n", err.Error())
 	}
 }
 
 func Error(text string, ctx ...interface{}) {
 	if logger == nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
 	message := newMessage(text, ctx...)
 	message.Level = gelf.LOG_ERR
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		_, _ = fmt.Fprintf(os.Stderr, "WriteMessage error: %s\n", err.Error())
 	}
 }
 
 func newMessage(text string, ctx ...interface{}) *gelf.Message {
 	hostname, err := os.Hostname()
 	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		_, _ = fmt.Fprintf(os.Stderr, "Hostname error: %s\n", err.Error())
 	}
 
 	attrs := newAttributes(ctx...)
