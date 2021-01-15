@@ -11,9 +11,9 @@ import (
 	"gopkg.in/Graylog2/go-gelf.v2/gelf"
 )
 
-var logger *Logger
-
 const loggerPrefix = "Equilibrium Bridge (Relay)"
+
+var logger *Logger
 
 type Logger struct {
 	gelf *gelf.TCPWriter
@@ -51,12 +51,26 @@ func Message(text string, m msg.Message) {
 	ctx = append(ctx, "destination_chain", m.Destination)
 	ctx = append(ctx, "action", m.Type)
 	ctx = append(ctx, "nonce", m.DepositNonce)
+	if m.Type == msg.FungibleTransfer {
+		if len(m.Payload) > 0 {
+			ctx = append(ctx, "value", fmt.Sprintf("%v", m.Payload[0]))
+		}
+		if len(m.Payload) > 1 {
+			recipient, ok := m.Payload[1].([]byte)
+			if ok {
+				ctx = append(ctx, "recipient", hex.EncodeToString(recipient))
+			} else {
+				ctx = append(ctx, "recipient", fmt.Sprintf("%v", m.Payload[1]))
+			}
+		}
+	}
 	Info(text, ctx...)
 }
 
 // type EventFungibleTransfer struct {
 //  	Destination  types.U8
 //  	DepositNonce types.U64
+//      ResourceId   types.Bytes32
 //  	Amount       types.U256
 //  	Recipient    types.Bytes
 // }
@@ -114,7 +128,9 @@ func newMessage(text string, ctx ...interface{}) *gelf.Message {
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 	}
+
 	attrs := newAttributes(ctx...)
+
 	return &gelf.Message{
 		Version:  "1.1",
 		Host:     hostname,
@@ -140,11 +156,13 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 		"nonce":             nil,
 		"block":             nil,
 	}
+
 	N := len(ctx)
 	if N%2 != 0 {
 		_, _ = fmt.Fprintf(os.Stderr, "Uneven set of attributes '%v'\n", ctx)
 		return attrs
 	}
+
 	for i := 0; i < N-1; i += 2 {
 		name := fmt.Sprintf("%v", ctx[i])
 		value := ctx[i+1]
@@ -156,5 +174,6 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 			_, _ = fmt.Fprintf(os.Stderr, "Unsupported attribute '%s=%v'\n", name, value)
 		}
 	}
+
 	return attrs
 }
