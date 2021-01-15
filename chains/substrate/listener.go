@@ -216,7 +216,9 @@ func (l *listener) handleEvents(evts utils.Events) {
 			factor := big.NewInt(1000000000)
 			oldAmount := evt.Amount.Int.String()
 			amount := new(big.Int).Mul(evt.Amount.Int, factor)
-			equilibrium.Info(fmt.Sprintf("Substrate transfer scaled value %s -> %s", oldAmount, amount.String()))
+			ctx := make([]interface{}, 0)
+			ctx = append(ctx, "action", "S->E")
+			equilibrium.Info(fmt.Sprintf("(S->E) Scale value %s -> %s", oldAmount, amount.String()), ctx...)
 			evt.Amount = types.NewU256(*amount)
 			l.submitMessage(l.subscriptions[FungibleTransfer](evt, l.log))
 		}

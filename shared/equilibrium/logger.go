@@ -28,6 +28,7 @@ func CreateGrayLogger(addr string) error {
 	if err != nil {
 		return err
 	}
+	gelfWriter.MaxReconnect = 10
 
 	logger = &Logger{gelfWriter}
 
@@ -42,7 +43,7 @@ func CreateGrayLogger(addr string) error {
 //      ResourceId   ResourceId
 //      Payload      []interface{} // data associated with event sequence
 // }
-func Message(text string, m msg.Message) {
+func Message(action, text string, m msg.Message) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
@@ -50,7 +51,7 @@ func Message(text string, m msg.Message) {
 	ctx := make([]interface{}, 0)
 	ctx = append(ctx, "source_chain", m.Source)
 	ctx = append(ctx, "destination_chain", m.Destination)
-	ctx = append(ctx, "action", m.Type)
+	ctx = append(ctx, "action", action)
 	ctx = append(ctx, "nonce", m.DepositNonce)
 	// if m.Type == msg.FungibleTransfer {
 	// 	if len(m.Payload) > 0 {
@@ -75,13 +76,13 @@ func Message(text string, m msg.Message) {
 //  	Amount       types.U256
 //  	Recipient    types.Bytes
 // }
-func EventFungibleTransfer(text string, e events.EventFungibleTransfer) {
+func EventFungibleTransfer(action, text string, e events.EventFungibleTransfer) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
 	ctx := make([]interface{}, 0)
-	ctx = append(ctx, "action", msg.FungibleTransfer)
+	ctx = append(ctx, "action", action)
 	ctx = append(ctx, "destination_chain", e.Destination)
 	ctx = append(ctx, "nonce", e.DepositNonce)
 	ctx = append(ctx, "value", e.Amount.Int.String())

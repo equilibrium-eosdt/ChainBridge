@@ -6,6 +6,7 @@ package ethereum
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math/big"
 	"time"
 
@@ -62,17 +63,19 @@ func (w *writer) hasVoted(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte)
 }
 
 func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
+	action := "S->E"
+
 	// Check if proposal has passed and skip if Passed or Transferred
 	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		equilibrium.Message("Proposal complete, not voting", m)
+		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", action), m)
 		return false
 	}
 
 	// Check if relayer has previously voted
 	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		equilibrium.Message("Relayer has already voted, not voting", m)
+		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", action), m)
 		return false
 	}
 
@@ -83,7 +86,6 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 // Returns true if the proposal is successfully created or is complete
 func (w *writer) createErc20Proposal(m msg.Message) bool {
 	w.log.Info("Creating erc20 proposal", "src", m.Source, "nonce", m.DepositNonce)
-	equilibrium.Message("Creating erc20 proposal", m)
 
 	data := ConstructErc20ProposalData(m.Payload[0].([]byte), m.Payload[1].([]byte))
 	dataHash := utils.Hash(append(w.cfg.erc20HandlerContract.Bytes(), data...))
@@ -222,6 +224,7 @@ func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte,
 // voteProposal submits a vote proposal
 // a vote proposal will try to be submitted up to the TxRetryLimit times
 func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
+	action := "S->E"
 	for i := 0; i < TxRetryLimit; i++ {
 		select {
 		case <-w.stop:
@@ -244,7 +247,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 
 			if err == nil {
 				w.log.Info("Submitted proposal vote", "tx", tx.Hash(), "src", m.Source, "depositNonce", m.DepositNonce)
-				equilibrium.Message("Submitted proposal vote", m)
+				equilibrium.Message(action, fmt.Sprintf("(%s) Submitted proposal vote", action), m)
 				if w.metrics != nil {
 					w.metrics.VotesSubmitted.Inc()
 				}
@@ -260,7 +263,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			// Verify proposal is still open for voting, otherwise no need to retry
 			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal voting complete on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message("Proposal voting complete on chain", m)
+				equilibrium.Message(action, fmt.Sprintf("(%s) Proposal voting complete on chain", action), m)
 				return
 			}
 		}
@@ -271,6 +274,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 
 // executeProposal executes the proposal
 func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) {
+	action := "S->E"
 	for i := 0; i < TxRetryLimit; i++ {
 		select {
 		case <-w.stop:
@@ -293,7 +297,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 
 			if err == nil {
 				w.log.Info("Submitted proposal execution", "tx", tx.Hash(), "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message("Submitted proposal execution", m)
+				equilibrium.Message(action, fmt.Sprintf("(%s) Submitted proposal execution", action), m)
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
 				w.log.Error("Nonce too low, will retry")
@@ -307,7 +311,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			// but there is no need to retry
 			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal finalized on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message("Proposal finalized on chain", m)
+				equilibrium.Message(action, fmt.Sprintf("(%s) Proposal finalized on chain", action), m)
 				return
 			}
 		}

@@ -26,7 +26,10 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	factor := big.NewInt(1000000000)
 	amount := new(big.Int).Div(record.Amount, factor)
 
-	equilibrium.Info(fmt.Sprintf("ERC20 deposit scaled value %s -> %s", oldAmount, amount.String()))
+	action := "E->S"
+	ctx := make([]interface{}, 0)
+	ctx = append(ctx, "action", action)
+	equilibrium.Info(fmt.Sprintf("(%s) Scale value %s -> %s", action, oldAmount, amount.String()), ctx...)
 
 	result := msg.NewFungibleTransfer(
 		l.cfg.id,
@@ -37,7 +40,7 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 		record.DestinationRecipientAddress,
 	)
 
-	equilibrium.Message("Handling fungible deposit event", result)
+	equilibrium.Message(action, fmt.Sprintf("(%s) handleErc20DepositedEvent", action), result)
 
 	return result, nil
 }

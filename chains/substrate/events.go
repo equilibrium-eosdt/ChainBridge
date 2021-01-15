@@ -38,7 +38,8 @@ func fungibleTransferHandler(evtI interface{}, log log15.Logger) (msg.Message, e
 
 	resourceId := msg.ResourceId(evt.ResourceId)
 	log.Info("Got fungible transfer event!", "destination", evt.Destination, "resourceId", resourceId.Hex(), "amount", evt.Amount)
-	equilibrium.EventFungibleTransfer("Got fungible transfer event", evt)
+	action := "S->E"
+	equilibrium.EventFungibleTransfer(action, fmt.Sprintf("(%s) fungibleTransferHandler", action), evt)
 
 	return msg.NewFungibleTransfer(
 		0, // Unset
