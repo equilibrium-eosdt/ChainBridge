@@ -68,7 +68,7 @@ func EventFungibleTransfer(text string, e events.EventFungibleTransfer) {
 	ctx = append(ctx, "action", msg.FungibleTransfer)
 	ctx = append(ctx, "destination_chain", e.Destination)
 	ctx = append(ctx, "nonce", e.DepositNonce)
-	ctx = append(ctx, "value", e.Amount.Int)
+	ctx = append(ctx, "value", e.Amount.Int.String())
 	ctx = append(ctx, "recipient", hex.EncodeToString(e.Recipient))
 	Info(text, ctx...)
 }
