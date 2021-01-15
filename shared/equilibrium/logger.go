@@ -53,19 +53,19 @@ func Message(action, text string, m msg.Message) {
 	ctx = append(ctx, "destination_chain", m.Destination)
 	ctx = append(ctx, "action", action)
 	ctx = append(ctx, "nonce", m.DepositNonce)
-	// if m.Type == msg.FungibleTransfer {
-	// 	if len(m.Payload) > 0 {
-	// 		ctx = append(ctx, "value", fmt.Sprintf("%v", m.Payload[0]))
-	// 	}
-	// 	if len(m.Payload) > 1 {
-	// 		recipient, ok := m.Payload[1].([]byte)
-	// 		if ok {
-	// 			ctx = append(ctx, "recipient", hex.EncodeToString(recipient))
-	// 		} else {
-	// 			ctx = append(ctx, "recipient", fmt.Sprintf("%v", m.Payload[1]))
-	// 		}
-	// 	}
-	// }
+	if m.Type == msg.FungibleTransfer {
+		if len(m.Payload) > 0 {
+			ctx = append(ctx, "value", fmt.Sprintf("%v", m.Payload[0]))
+		}
+		if len(m.Payload) > 1 {
+			recipient, ok := m.Payload[1].([]byte)
+			if ok {
+				ctx = append(ctx, "recipient", hex.EncodeToString(recipient))
+			} else {
+				ctx = append(ctx, "recipient", fmt.Sprintf("%v", m.Payload[1]))
+			}
+		}
+	}
 	Info(text, ctx...)
 }
 

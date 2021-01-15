@@ -247,7 +247,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 
 			if err == nil {
 				w.log.Info("Submitted proposal vote", "tx", tx.Hash(), "src", m.Source, "depositNonce", m.DepositNonce)
-				equilibrium.Message(action, fmt.Sprintf("(%s) Submitted proposal vote", action), m)
+				equilibrium.Message(action, fmt.Sprintf("(%s) SubmitTx ProposalVote", action), m)
 				if w.metrics != nil {
 					w.metrics.VotesSubmitted.Inc()
 				}
@@ -297,7 +297,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 
 			if err == nil {
 				w.log.Info("Submitted proposal execution", "tx", tx.Hash(), "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message(action, fmt.Sprintf("(%s) Submitted proposal execution", action), m)
+				equilibrium.Message(action, fmt.Sprintf("(%s) SubmitTx ProposalExecute", action), m)
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
 				w.log.Error("Nonce too low, will retry")
