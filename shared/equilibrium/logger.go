@@ -98,7 +98,9 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, dataHash
 		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
 	}
 
-	ctx = append(ctx, "data_hash", hex.EncodeToString(dataHash[:]))
+	if dataHash != [32]byte{} {
+		ctx = append(ctx, "data_hash", hex.EncodeToString(dataHash[:]))
+	}
 
 	Info(text, ctx...)
 }
