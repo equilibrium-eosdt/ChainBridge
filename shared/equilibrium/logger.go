@@ -89,10 +89,10 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 
 	if tx != nil {
 		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
-		ctx = append(ctx, "value", tx.Value().String())
+		ctx = append(ctx, "tx_value", tx.Value().String())
 		recipient := tx.To()
 		if recipient != nil {
-			ctx = append(ctx, "recipient", recipient.Hex())
+			ctx = append(ctx, "tx_recipient", recipient.Hex())
 		}
 	}
 
