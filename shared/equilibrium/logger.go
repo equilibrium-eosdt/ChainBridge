@@ -88,12 +88,15 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 	}
 
 	if tx != nil {
+		ctx = append(ctx, "tx_present", "true")
 		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
 		ctx = append(ctx, "tx_value", tx.Value().String())
 		recipient := tx.To()
 		if recipient != nil {
 			ctx = append(ctx, "tx_recipient", recipient.Hex())
 		}
+	} else {
+		ctx = append(ctx, "tx_present", "false")
 	}
 
 	Info(text, ctx...)
