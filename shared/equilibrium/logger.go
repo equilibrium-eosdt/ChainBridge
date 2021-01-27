@@ -64,7 +64,7 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 	ctx = append(ctx, "action", action)
 	ctx = append(ctx, "nonce", m.DepositNonce)
 	ctx = append(ctx, "type", m.Type)
-	ctx = append(ctx, "resource_id", m.ResourceId[:])
+	ctx = append(ctx, "resource_id", hex.EncodeToString(m.ResourceId[:]))
 
 	if m.Type == msg.FungibleTransfer {
 		if len(m.Payload) > 0 {
