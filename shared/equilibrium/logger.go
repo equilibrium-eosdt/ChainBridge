@@ -94,6 +94,12 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 		if to != nil {
 			ctx = append(ctx, "tx_to_address", to.Hex())
 		}
+		js, err := tx.MarshalJSON()
+		if err != nil {
+			ctx = append(ctx, "tx_json", string(js))
+		} else {
+			ctx = append(ctx, "tx_json", err.Error())
+		}
 	}
 
 	Info(text, ctx...)
