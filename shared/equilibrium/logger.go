@@ -3,6 +3,7 @@ package equilibrium
 import (
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"os"
 	"time"
 
@@ -48,6 +49,8 @@ func CreateGrayLogger(addr, environment string) error {
 //
 // type Transaction struct {
 //      func Hash() common.Hash
+//      func Value() *big.Int
+//      func To() *common.Address
 // }
 func Message(action, text string, m msg.Message, tx *types.Transaction) {
 	if logger == nil {
@@ -65,7 +68,14 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 
 	if m.Type == msg.FungibleTransfer {
 		if len(m.Payload) > 0 {
-			ctx = append(ctx, "value", fmt.Sprintf("%v", m.Payload[0]))
+			valueBytes, ok := m.Payload[0].([]byte)
+			if ok {
+				var value big.Int
+				value.SetBytes(valueBytes)
+				ctx = append(ctx, "value", value.String())
+			} else {
+				ctx = append(ctx, "value", fmt.Sprintf("%v", m.Payload[0]))
+			}
 		}
 		if len(m.Payload) > 1 {
 			recipient, ok := m.Payload[1].([]byte)
@@ -79,6 +89,11 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 
 	if tx != nil {
 		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
+		ctx = append(ctx, "value", tx.Value().String())
+		recipient := tx.To()
+		if recipient != nil {
+			ctx = append(ctx, "recipient", recipient.Hex())
+		}
 	}
 
 	Info(text, ctx...)
