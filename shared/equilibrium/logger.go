@@ -88,18 +88,14 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 	}
 
 	if tx != nil {
-		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
-		ctx = append(ctx, "tx_value", tx.Value().String())
-		to := tx.To()
-		if to != nil {
-			ctx = append(ctx, "tx_to_address", to.Hex())
-		}
 		js, err := tx.MarshalJSON()
 		if err != nil {
 			ctx = append(ctx, "tx_json", err.Error())
 		} else {
 			ctx = append(ctx, "tx_json", string(js))
 		}
+
+		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
 	}
 
 	Info(text, ctx...)

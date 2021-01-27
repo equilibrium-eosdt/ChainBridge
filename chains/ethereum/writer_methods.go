@@ -5,6 +5,7 @@ package ethereum
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
@@ -90,6 +91,7 @@ func (w *writer) createErc20Proposal(m msg.Message) bool {
 
 	data := ConstructErc20ProposalData(m.Payload[0].([]byte), m.Payload[1].([]byte))
 	dataHash := utils.Hash(append(w.cfg.erc20HandlerContract.Bytes(), data...))
+	println("==== createErc20Proposal dataHash: ", hex.EncodeToString(dataHash[:]))
 
 	if !w.shouldVote(m, dataHash) {
 		return false
