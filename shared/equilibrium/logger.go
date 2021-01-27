@@ -8,6 +8,7 @@ import (
 
 	events "github.com/ChainSafe/chainbridge-substrate-events"
 	"github.com/ChainSafe/chainbridge-utils/msg"
+	"github.com/ethereum/go-ethereum/core/types"
 	"gopkg.in/Graylog2/go-gelf.v2/gelf"
 )
 
@@ -44,16 +45,24 @@ func CreateGrayLogger(addr, environment string) error {
 //      ResourceId   ResourceId
 //      Payload      []interface{} // data associated with event sequence
 // }
-func Message(action, text string, m msg.Message) {
+//
+// type Transaction struct {
+//      func Hash() common.Hash
+// }
+func Message(action, text string, m msg.Message, tx *types.Transaction) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
+
 	ctx := make([]interface{}, 0)
 	ctx = append(ctx, "source_chain", m.Source)
 	ctx = append(ctx, "destination_chain", m.Destination)
 	ctx = append(ctx, "action", action)
 	ctx = append(ctx, "nonce", m.DepositNonce)
+	ctx = append(ctx, "type", m.Type)
+	ctx = append(ctx, "resource_id", m.ResourceId[:])
+
 	if m.Type == msg.FungibleTransfer {
 		if len(m.Payload) > 0 {
 			ctx = append(ctx, "value", fmt.Sprintf("%v", m.Payload[0]))
@@ -67,6 +76,11 @@ func Message(action, text string, m msg.Message) {
 			}
 		}
 	}
+
+	if tx != nil {
+		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
+	}
+
 	Info(text, ctx...)
 }
 
