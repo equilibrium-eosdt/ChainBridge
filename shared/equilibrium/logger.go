@@ -96,9 +96,9 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 		}
 		js, err := tx.MarshalJSON()
 		if err != nil {
-			ctx = append(ctx, "tx_json", string(js))
-		} else {
 			ctx = append(ctx, "tx_json", err.Error())
+		} else {
+			ctx = append(ctx, "tx_json", string(js))
 		}
 	}
 
