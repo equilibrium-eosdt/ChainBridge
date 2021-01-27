@@ -38,7 +38,8 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 		record.DestinationRecipientAddress,
 	)
 
-	equilibrium.Message("EventFound", fmt.Sprintf("(%s) Handle Erc20DepositedEvent", direction), result, nil)
+	equilibrium.Message("EventFound", fmt.Sprintf("(%s) Handle Erc20DepositedEvent", direction),
+		result, nil, [32]byte{})
 
 	return result, nil
 }

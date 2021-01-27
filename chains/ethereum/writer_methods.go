@@ -5,7 +5,6 @@ package ethereum
 
 import (
 	"context"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
@@ -70,14 +69,16 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 	// Check if proposal has passed and skip if Passed or Transferred
 	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", direction), m, nil)
+		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", direction),
+			m, nil, dataHash)
 		return false
 	}
 
 	// Check if relayer has previously voted
 	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
-		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", direction), m, nil)
+		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", direction),
+			m, nil, dataHash)
 		return false
 	}
 
@@ -91,7 +92,6 @@ func (w *writer) createErc20Proposal(m msg.Message) bool {
 
 	data := ConstructErc20ProposalData(m.Payload[0].([]byte), m.Payload[1].([]byte))
 	dataHash := utils.Hash(append(w.cfg.erc20HandlerContract.Bytes(), data...))
-	println("==== createErc20Proposal dataHash: ", hex.EncodeToString(dataHash[:]))
 
 	if !w.shouldVote(m, dataHash) {
 		return false
@@ -250,7 +250,8 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 
 			if err == nil {
 				w.log.Info("Submitted proposal vote", "tx", tx.Hash(), "src", m.Source, "depositNonce", m.DepositNonce)
-				equilibrium.Message("ProposalVote", fmt.Sprintf("(%s) SubmitTx ProposalVote", direction), m, tx)
+				equilibrium.Message("ProposalVote", fmt.Sprintf("(%s) SubmitTx ProposalVote", direction),
+					m, tx, dataHash)
 				if w.metrics != nil {
 					w.metrics.VotesSubmitted.Inc()
 				}
@@ -266,7 +267,8 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			// Verify proposal is still open for voting, otherwise no need to retry
 			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal voting complete on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal voting complete on chain", direction), m, tx)
+				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal voting complete on chain", direction),
+					m, tx, dataHash)
 				return
 			}
 		}
@@ -300,7 +302,8 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 
 			if err == nil {
 				w.log.Info("Submitted proposal execution", "tx", tx.Hash(), "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message("ProposalExecute", fmt.Sprintf("(%s) SubmitTx ProposalExecute", direction), m, tx)
+				equilibrium.Message("ProposalExecute", fmt.Sprintf("(%s) SubmitTx ProposalExecute", direction),
+					m, tx, dataHash)
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
 				w.log.Error("Nonce too low, will retry")
@@ -314,7 +317,8 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			// but there is no need to retry
 			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal finalized on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
-				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal finalized on chain", direction), m, tx)
+				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal finalized on chain", direction),
+					m, tx, dataHash)
 				return
 			}
 		}
