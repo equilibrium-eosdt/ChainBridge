@@ -88,15 +88,12 @@ func Message(action, text string, m msg.Message, tx *types.Transaction) {
 	}
 
 	if tx != nil {
-		ctx = append(ctx, "tx_present", "true")
 		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
 		ctx = append(ctx, "tx_value", tx.Value().String())
 		recipient := tx.To()
 		if recipient != nil {
 			ctx = append(ctx, "tx_recipient", recipient.Hex())
 		}
-	} else {
-		ctx = append(ctx, "tx_present", "false")
 	}
 
 	Info(text, ctx...)
@@ -186,16 +183,7 @@ func newMessage(text string, ctx ...interface{}) *gelf.Message {
 
 func newAttributes(ctx ...interface{}) map[string]interface{} {
 	attrs := map[string]interface{}{
-		"action":            nil,
-		"environment":       logger.environment,
-		"source_chain":      nil,
-		"destination_chain": nil,
-		"sender":            nil,
-		"recipient":         nil,
-		"value":             nil,
-		"token":             nil,
-		"nonce":             nil,
-		"block":             nil,
+		"environment": logger.environment,
 	}
 
 	N := len(ctx)
@@ -207,13 +195,7 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 	for i := 0; i < N-1; i += 2 {
 		name := fmt.Sprintf("%v", ctx[i])
 		value := ctx[i+1]
-		//_, _ = fmt.Fprintf(os.Stdout, "i=%v, name='%s', value='%v'\n", i, name, value)
-		_, supported := attrs[name]
-		if supported {
-			attrs[name] = value
-		} else {
-			_, _ = fmt.Fprintf(os.Stderr, "Unsupported attribute '%s=%v'\n", name, value)
-		}
+		attrs[name] = value
 	}
 
 	return attrs
