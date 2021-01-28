@@ -9,6 +9,8 @@ import (
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/centrifuge/go-substrate-rpc-client/scale"
 	"github.com/centrifuge/go-substrate-rpc-client/types"
+
+	utils "github.com/ChainSafe/ChainBridge/shared/substrate"
 )
 
 type voteState struct {
@@ -56,6 +58,26 @@ func (p *proposal) encode() ([]byte, error) {
 		types.U64
 		types.Call
 	}{p.depositNonce, p.call})
+}
+
+func (w *writer) CreateStorageKey(prop *proposal) (types.StorageKey, error) {
+	srcId, err := types.EncodeToBytes(prop.sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	propBz, err := prop.encode()
+	if err != nil {
+		return nil, err
+	}
+
+	data := w.conn.getMetadata()
+	key, err := types.CreateStorageKey(&data, utils.BridgeStoragePrefix, "Votes", srcId, propBz)
+	if err != nil {
+		return nil, err
+	}
+
+	return key, nil
 }
 
 func (w *writer) createFungibleProposal(m msg.Message) (*proposal, error) {

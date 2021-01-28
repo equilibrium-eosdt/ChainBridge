@@ -66,7 +66,7 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 		return false
 	}
 
-	encodedProposal, err := prop.encode()
+	propKey, err := w.CreateStorageKey(prop)
 	if err != nil {
 		w.sysErr <- fmt.Errorf("failed to encode proposal (chain=%d, name=%s) Error: %w", m.Destination, w.conn.name, err)
 		return false
@@ -86,7 +86,7 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 		if valid {
 			w.log.Trace("Acknowledging proposal on chain", "nonce", prop.depositNonce, "source", prop.sourceId, "resource", fmt.Sprintf("%x", prop.resourceId), "method", prop.method)
 			equilibrium.Message("AcknowledgeProposal", fmt.Sprintf("(%s) SubmitTx AcknowledgeProposal", direction),
-				m, nil, encodedProposal)
+				m, nil, propKey)
 			err = w.conn.SubmitTx(AcknowledgeProposal, prop.depositNonce, prop.sourceId, prop.resourceId, prop.call)
 			if err != nil && err.Error() == TerminatedError.Error() {
 				return false
