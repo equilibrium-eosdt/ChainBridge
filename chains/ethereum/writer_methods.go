@@ -70,7 +70,7 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
 		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", direction),
-			m, nil, dataHash)
+			m, nil, dataHash[:])
 		return false
 	}
 
@@ -78,7 +78,7 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
 		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", direction),
-			m, nil, dataHash)
+			m, nil, dataHash[:])
 		return false
 	}
 
@@ -251,7 +251,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			if err == nil {
 				w.log.Info("Submitted proposal vote", "tx", tx.Hash(), "src", m.Source, "depositNonce", m.DepositNonce)
 				equilibrium.Message("ProposalVote", fmt.Sprintf("(%s) SubmitTx ProposalVote", direction),
-					m, tx, dataHash)
+					m, tx, dataHash[:])
 				if w.metrics != nil {
 					w.metrics.VotesSubmitted.Inc()
 				}
@@ -268,7 +268,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal voting complete on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal voting complete on chain", direction),
-					m, tx, dataHash)
+					m, tx, dataHash[:])
 				return
 			}
 		}
@@ -303,7 +303,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			if err == nil {
 				w.log.Info("Submitted proposal execution", "tx", tx.Hash(), "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("ProposalExecute", fmt.Sprintf("(%s) SubmitTx ProposalExecute", direction),
-					m, tx, dataHash)
+					m, tx, dataHash[:])
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
 				w.log.Error("Nonce too low, will retry")
@@ -318,7 +318,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal finalized on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal finalized on chain", direction),
-					m, tx, dataHash)
+					m, tx, dataHash[:])
 				return
 			}
 		}

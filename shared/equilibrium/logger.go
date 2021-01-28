@@ -52,7 +52,7 @@ func CreateGrayLogger(addr, environment string) error {
 //      func Value() *big.Int
 //      func To() *common.Address
 // }
-func Message(action, text string, m msg.Message, tx *types.Transaction, dataHash [32]byte) {
+func Message(action, text string, m msg.Message, tx *types.Transaction, data []byte) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
@@ -98,8 +98,12 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, dataHash
 		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
 	}
 
-	if dataHash != [32]byte{} {
-		ctx = append(ctx, "data_hash", hex.EncodeToString(dataHash[:]))
+	if data != nil {
+		if action == "AcknowledgeProposal" {
+			ctx = append(ctx, "proposal", hex.EncodeToString(data))
+		} else {
+			ctx = append(ctx, "data_hash", hex.EncodeToString(data))
+		}
 	}
 
 	Info(text, ctx...)

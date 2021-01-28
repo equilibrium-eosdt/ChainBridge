@@ -39,7 +39,7 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	)
 
 	equilibrium.Message("EventFound", fmt.Sprintf("(%s) Handle Erc20DepositedEvent", direction),
-		result, nil, [32]byte{})
+		result, nil, nil)
 
 	return result, nil
 }
