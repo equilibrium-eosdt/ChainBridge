@@ -213,6 +213,8 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 	return attrs
 }
 
+/// Splits string in three substrings to represent hashes of proposal.
+/// See also ChainBridge.votes method.
 func formatProposal(s string) string {
 	const chunkLen = 64
 	if utf8.RuneCountInString(s) != 3*chunkLen {
@@ -228,5 +230,5 @@ func formatProposal(s string) string {
 			s2 += string(c)
 		}
 	}
-	return "[" + s0 + "," + s1 + "," + s2 + "]"
+	return "[0x" + s0 + ", 0x" + s1 + ", 0x" + s2 + "]"
 }
