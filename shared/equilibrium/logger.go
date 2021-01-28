@@ -100,7 +100,7 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 
 	if data != nil {
 		if action == "AcknowledgeProposal" {
-			ctx = append(ctx, "proposal", hex.EncodeToString(data))
+			ctx = append(ctx, "proposal", string(data))
 		} else {
 			ctx = append(ctx, "data_hash", hex.EncodeToString(data))
 		}
