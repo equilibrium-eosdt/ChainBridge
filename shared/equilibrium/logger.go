@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"os"
 	"time"
+	"unicode/utf8"
 
 	events "github.com/ChainSafe/chainbridge-substrate-events"
 	"github.com/ChainSafe/chainbridge-utils/msg"
@@ -99,10 +100,11 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 	}
 
 	if data != nil {
-		if action == "AcknowledgeProposal" {
-			ctx = append(ctx, "proposal", hex.EncodeToString(data))
+		value := hex.EncodeToString(data)
+		if action != "AcknowledgeProposal" {
+			ctx = append(ctx, "data_hash", value)
 		} else {
-			ctx = append(ctx, "data_hash", hex.EncodeToString(data))
+			ctx = append(ctx, "proposal", formatProposal(value))
 		}
 	}
 
@@ -209,4 +211,22 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 	}
 
 	return attrs
+}
+
+func formatProposal(s string) string {
+	const chunkLen = 64
+	if utf8.RuneCountInString(s) != 3*chunkLen {
+		return s
+	}
+	var s0, s1, s2 string
+	for i, c := range s {
+		if i < chunkLen {
+			s0 += string(c)
+		} else if i < 2*chunkLen {
+			s1 += string(c)
+		} else {
+			s2 += string(c)
+		}
+	}
+	return "[" + s0 + "," + s1 + "," + s2 + "]"
 }
