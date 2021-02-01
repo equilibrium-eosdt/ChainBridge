@@ -23,6 +23,12 @@ type Blockstore struct {
 
 // InitBlockstore creates new blockstore.
 func InitBlockstore(dirbs *blockstore.Blockstore, mongobs *mongo.Blockstore) *Blockstore {
+	if dirbs == nil && mongobs == nil {
+		panic("Error: no blockstore")
+	}
+	if dirbs != nil && mongobs != nil {
+		panic("Error: there must be only one blockstore")
+	}
 	return &Blockstore{dirbs, mongobs}
 }
 

@@ -60,8 +60,7 @@ func (b *Blockstore) StoreBlock(block *big.Int) error {
 
 	filter := bson.D{{"relayer-id", bsonx.String(b.id)}}
 	record := bson.D{{"relayer-id", bsonx.String(b.id)}, {"block", bsonx.String(block.String())}}
-	var replacedDocument bson.M
-	err := coll.FindOneAndReplace(ctx, filter, record).Decode(&replacedDocument)
+	err := coll.FindOneAndReplace(ctx, filter, record).Err()
 	if err != nil {
 		if err == mongodb.ErrNoDocuments {
 			_, err = coll.InsertOne(ctx, record)
