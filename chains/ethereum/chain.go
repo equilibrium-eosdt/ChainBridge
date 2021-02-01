@@ -23,11 +23,14 @@ package ethereum
 import (
 	"fmt"
 	"math/big"
+	"strings"
 
 	bridge "github.com/ChainSafe/ChainBridge/bindings/Bridge"
 	erc20Handler "github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
 	erc721Handler "github.com/ChainSafe/ChainBridge/bindings/ERC721Handler"
 	"github.com/ChainSafe/ChainBridge/bindings/GenericHandler"
+	"github.com/ChainSafe/ChainBridge/config"
+	"github.com/ChainSafe/ChainBridge/config/mongo"
 	connection "github.com/ChainSafe/ChainBridge/connections/ethereum"
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	"github.com/ChainSafe/chainbridge-utils/core"
@@ -65,28 +68,6 @@ type Chain struct {
 	listener *listener         // The listener of this chain
 	writer   *writer           // The writer of the chain
 	stop     chan<- int
-}
-
-// checkBlockstore queries the blockstore for the latest known block. If the latest block is
-// greater than cfg.startBlock, then cfg.startBlock is replaced with the latest known block.
-func setupBlockstore(cfg *Config, kp *secp256k1.Keypair) (*blockstore.Blockstore, error) {
-	bs, err := blockstore.NewBlockstore(cfg.blockstorePath, cfg.id, kp.Address())
-	if err != nil {
-		return nil, err
-	}
-
-	if !cfg.freshStart {
-		latestBlock, err := bs.TryLoadLatestBlock()
-		if err != nil {
-			return nil, err
-		}
-
-		if latestBlock.Cmp(cfg.startBlock) == 1 {
-			cfg.startBlock = latestBlock
-		}
-	}
-
-	return bs, nil
 }
 
 func InitializeChain(chainCfg *core.ChainConfig, logger log15.Logger, sysErr chan<- error, m *metrics.ChainMetrics) (*Chain, error) {
@@ -215,4 +196,65 @@ func (c *Chain) Stop() {
 	if c.conn != nil {
 		c.conn.Close()
 	}
+}
+
+// setupBlockstore creates and inits new blockstore.
+func setupBlockstore(cfg *Config, kp *secp256k1.Keypair) (*config.Blockstore, error) {
+	var err error
+	var dirbs *blockstore.Blockstore
+	var mongobs *mongo.Blockstore
+	if strings.HasPrefix(cfg.blockstorePath, config.MONGODB) {
+		mongobs, err = setupMongoBlockstore(cfg, kp)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		dirbs, err = setupDirBlockstore(cfg, kp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return config.InitBlockstore(dirbs, mongobs), nil
+}
+
+// setupDirBlockstore creates new blockstore with directory.
+func setupDirBlockstore(cfg *Config, kp *secp256k1.Keypair) (*blockstore.Blockstore, error) {
+	bs, err := blockstore.NewBlockstore(cfg.blockstorePath, cfg.id, kp.Address())
+	if err != nil {
+		return nil, err
+	}
+
+	if !cfg.freshStart {
+		latestBlock, err := bs.TryLoadLatestBlock()
+		if err != nil {
+			return nil, err
+		}
+
+		if latestBlock.Cmp(cfg.startBlock) == 1 {
+			cfg.startBlock = latestBlock
+		}
+	}
+
+	return bs, nil
+}
+
+// setupMongoBlockstore creates new blockstore with MongoDB.
+func setupMongoBlockstore(cfg *Config, kp *secp256k1.Keypair) (*mongo.Blockstore, error) {
+	bs, err := mongo.NewBlockstore(cfg.blockstorePath, cfg.id, kp.Address())
+	if err != nil {
+		return nil, err
+	}
+
+	if !cfg.freshStart {
+		latestBlock, err := bs.TryLoadLatestBlock()
+		if err != nil {
+			return nil, err
+		}
+
+		if latestBlock.Cmp(cfg.startBlock) == 1 {
+			cfg.startBlock = latestBlock
+		}
+	}
+
+	return bs, nil
 }

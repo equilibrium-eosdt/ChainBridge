@@ -28,7 +28,7 @@ var (
 
 	BlockstorePathFlag = &cli.StringFlag{
 		Name:  "blockstore",
-		Usage: "Specify path for blockstore",
+		Usage: "Specify path (directory or mongodb) for blockstore",
 		Value: "", // Empty will use home dir
 	}
 

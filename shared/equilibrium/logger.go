@@ -6,7 +6,6 @@ import (
 	"math/big"
 	"os"
 	"time"
-	"unicode/utf8"
 
 	events "github.com/ChainSafe/chainbridge-substrate-events"
 	"github.com/ChainSafe/chainbridge-utils/msg"
@@ -214,12 +213,12 @@ func newAttributes(ctx ...interface{}) map[string]interface{} {
 }
 
 /// Splits string in three substrings to represent hashes of proposal.
+/// s0: hash of prefix+method
+/// s1: hash of srcId
+/// s2: hash of proposal itself
 /// See also ChainBridge.votes method.
 func formatProposal(s string) string {
 	const chunkLen = 64
-	if utf8.RuneCountInString(s) != 3*chunkLen {
-		return s
-	}
 	var s0, s1, s2 string
 	for i, c := range s {
 		if i < chunkLen {

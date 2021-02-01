@@ -24,13 +24,14 @@ As the writer receives messages from the router, it constructs proposals. If a p
 package substrate
 
 import (
-	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/crypto/sr25519"
 	"github.com/ChainSafe/chainbridge-utils/keystore"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ChainSafe/log15"
+
+	"github.com/ChainSafe/ChainBridge/config"
 )
 
 var _ core.Chain = &Chain{}
@@ -43,21 +44,6 @@ type Chain struct {
 	stop     chan<- int
 }
 
-// checkBlockstore queries the blockstore for the latest known block. If the latest block is
-// greater than startBlock, then the latest block is returned, otherwise startBlock is.
-func checkBlockstore(bs *blockstore.Blockstore, startBlock uint64) (uint64, error) {
-	latestBlock, err := bs.TryLoadLatestBlock()
-	if err != nil {
-		return 0, err
-	}
-
-	if latestBlock.Uint64() > startBlock {
-		return latestBlock.Uint64(), nil
-	} else {
-		return startBlock, nil
-	}
-}
-
 func InitializeChain(cfg *core.ChainConfig, logger log15.Logger, sysErr chan<- error, m *metrics.ChainMetrics) (*Chain, error) {
 	kp, err := keystore.KeypairFromAddress(cfg.From, keystore.SubChain, cfg.KeystorePath, cfg.Insecure)
 	if err != nil {
@@ -67,13 +53,13 @@ func InitializeChain(cfg *core.ChainConfig, logger log15.Logger, sysErr chan<- e
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
 
 	// Attempt to load latest block
-	bs, err := blockstore.NewBlockstore(cfg.BlockstorePath, cfg.Id, kp.Address())
+	bs, err := config.NewBlockstore(cfg.BlockstorePath, cfg.Id, kp.Address())
 	if err != nil {
 		return nil, err
 	}
 	startBlock := parseStartBlock(cfg)
 	if !cfg.FreshStart {
-		startBlock, err = checkBlockstore(bs, startBlock)
+		startBlock, err = config.CheckBlockstore(bs, startBlock)
 		if err != nil {
 			return nil, err
 		}
