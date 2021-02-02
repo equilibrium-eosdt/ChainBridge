@@ -27,10 +27,11 @@ import (
 )
 
 var BlockDelay = big.NewInt(10)
-var PollingInterval = time.Second * 60
 var BlockRetryInterval = time.Second * 5
 var BlockRetryLimit = 5
 var ErrFatalPolling = errors.New("listener block polling failed")
+
+//var PollingInterval = time.Second * 60
 
 type listener struct {
 	cfg                    Config
@@ -102,7 +103,7 @@ func (l *listener) pollBlocks() error {
 		case <-l.stop:
 			return errors.New("polling terminated")
 		default:
-			time.Sleep(PollingInterval)
+			//time.Sleep(PollingInterval)
 
 			// No more retries, goto next block
 			if retry == 0 {
