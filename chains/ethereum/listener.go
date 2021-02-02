@@ -27,6 +27,7 @@ import (
 )
 
 var BlockDelay = big.NewInt(10)
+var PollingInterval = time.Second * 60
 var BlockRetryInterval = time.Second * 5
 var BlockRetryLimit = 5
 var ErrFatalPolling = errors.New("listener block polling failed")
@@ -101,6 +102,8 @@ func (l *listener) pollBlocks() error {
 		case <-l.stop:
 			return errors.New("polling terminated")
 		default:
+			time.Sleep(PollingInterval)
+
 			// No more retries, goto next block
 			if retry == 0 {
 				l.log.Error("Polling failed, retries exceeded")
