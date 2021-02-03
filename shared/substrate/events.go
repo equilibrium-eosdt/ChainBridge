@@ -120,38 +120,39 @@ type EventMultisigCancelled struct {
 }
 
 type EventTreasuryMinting struct {
-	Phase     	types.Phase
-	Who	        types.AccountID
-	Topics    	[]types.Hash
+	Phase  types.Phase
+	Who    types.AccountID
+	Topics []types.Hash
 }
 
 type Events struct {
 	types.EventRecords
 	events.Events
-	Erc721_Minted                    []EventErc721Minted                   // nolint:stylecheck,golint
-	Erc721_Transferred               []EventErc721Transferred              // nolint:stylecheck,golint
-	Erc721_Burned                    []EventErc721Burned                   // nolint:stylecheck,golint
-	Example_Remark                   []EventExampleRemark                  // nolint:stylecheck,golint
-	Nfts_DepositAsset                []EventNFTDeposited                   // nolint:stylecheck,golint
-	Council_Proposed                 []types.EventCollectiveProposed       // nolint:stylecheck,golint
-	Council_Voted                    []types.EventCollectiveVoted          // nolint:stylecheck,golint
-	Council_Approved                 []types.EventCollectiveApproved       // nolint:stylecheck,golint
-	Council_Disapproved              []types.EventCollectiveDisapproved    // nolint:stylecheck,golint
-	Council_Executed                 []types.EventCollectiveExecuted       // nolint:stylecheck,golint
-	Council_MemberExecuted           []types.EventCollectiveMemberExecuted // nolint:stylecheck,golint
-	Council_Closed                   []types.EventCollectiveClosed         // nolint:stylecheck,golint
-	Fees_FeeChanged                  []EventFeeChanged                     // nolint:stylecheck,golint
-	MultiAccount_NewMultiAccount     []EventNewMultiAccount                // nolint:stylecheck,golint
-	MultiAccount_MultiAccountUpdated []EventMultiAccountUpdated            // nolint:stylecheck,golint
-	MultiAccount_MultiAccountRemoved []EventMultiAccountRemoved            // nolint:stylecheck,golint
-	MultiAccount_NewMultisig         []EventNewMultisig                    // nolint:stylecheck,golint
-	MultiAccount_MultisigApproval    []EventMultisigApproval               // nolint:stylecheck,golint
-	MultiAccount_MultisigExecuted    []EventMultisigExecuted               // nolint:stylecheck,golint
-	MultiAccount_MultisigCancelled   []EventMultisigCancelled              // nolint:stylecheck,golint
-	TreasuryReward_TreasuryMinting 	 []EventTreasuryMinting		           // nolint:stylecheck,golint
-	Balances_Transfer                []equilibrium.EventBalancesTransfer   // nolint:stylecheck,golint
-	Balances_DeleteAccount           []equilibrium.EventBalancesDeleteAccount // nolint:stylecheck,golint
-	Oracle_NewPrice                  []equilibrium.EventOracleNewPrice     // nolint:stylecheck,golint
+	Erc721_Minted                    []EventErc721Minted                             // nolint:stylecheck,golint
+	Erc721_Transferred               []EventErc721Transferred                        // nolint:stylecheck,golint
+	Erc721_Burned                    []EventErc721Burned                             // nolint:stylecheck,golint
+	Example_Remark                   []EventExampleRemark                            // nolint:stylecheck,golint
+	Nfts_DepositAsset                []EventNFTDeposited                             // nolint:stylecheck,golint
+	Council_Proposed                 []types.EventCollectiveProposed                 // nolint:stylecheck,golint
+	Council_Voted                    []types.EventCollectiveVoted                    // nolint:stylecheck,golint
+	Council_Approved                 []types.EventCollectiveApproved                 // nolint:stylecheck,golint
+	Council_Disapproved              []types.EventCollectiveDisapproved              // nolint:stylecheck,golint
+	Council_Executed                 []types.EventCollectiveExecuted                 // nolint:stylecheck,golint
+	Council_MemberExecuted           []types.EventCollectiveMemberExecuted           // nolint:stylecheck,golint
+	Council_Closed                   []types.EventCollectiveClosed                   // nolint:stylecheck,golint
+	Fees_FeeChanged                  []EventFeeChanged                               // nolint:stylecheck,golint
+	MultiAccount_NewMultiAccount     []EventNewMultiAccount                          // nolint:stylecheck,golint
+	MultiAccount_MultiAccountUpdated []EventMultiAccountUpdated                      // nolint:stylecheck,golint
+	MultiAccount_MultiAccountRemoved []EventMultiAccountRemoved                      // nolint:stylecheck,golint
+	MultiAccount_NewMultisig         []EventNewMultisig                              // nolint:stylecheck,golint
+	MultiAccount_MultisigApproval    []EventMultisigApproval                         // nolint:stylecheck,golint
+	MultiAccount_MultisigExecuted    []EventMultisigExecuted                         // nolint:stylecheck,golint
+	MultiAccount_MultisigCancelled   []EventMultisigCancelled                        // nolint:stylecheck,golint
+	TreasuryReward_TreasuryMinting   []EventTreasuryMinting                          // nolint:stylecheck,golint
+	Balances_Transfer                []equilibrium.EventBalancesTransfer             // nolint:stylecheck,golint
+	Balances_DeleteAccount           []equilibrium.EventBalancesDeleteAccount        // nolint:stylecheck,golint
+	Balances_NotEnoughToBuyoutEq     []equilibrium.EventBalancesNotEnoughToBuyoutEq  // nolint:stylecheck,golint
+	Oracle_NewPrice                  []equilibrium.EventOracleNewPrice               // nolint:stylecheck,golint
 	Subaccounts_SubaccountCreated    []equilibrium.EventSubaccountsSubaccountCreated // nolint:stylecheck,golint
 	Subaccounts_RegisterBailsman     []equilibrium.EventSubaccountsRegisterBailsman  // nolint:stylecheck,golint
 }

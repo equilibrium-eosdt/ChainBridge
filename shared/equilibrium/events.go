@@ -6,6 +6,7 @@ import (
 
 /// Defines the currency of a transfer.
 type Currency byte
+
 const (
 	Unknown Currency = 0
 	Usd     Currency = 1
@@ -17,6 +18,7 @@ const (
 
 /// Describes the reason for a transfer.
 type Reason byte
+
 const (
 	Common                 Reason = 0
 	InterestFee            Reason = 1
@@ -38,9 +40,15 @@ type EventBalancesTransfer struct {
 }
 
 type EventBalancesDeleteAccount struct {
-	Phase    types.Phase
-	Account  types.AccountID
-	Topics   []types.Hash
+	Phase   types.Phase
+	Account types.AccountID
+	Topics  []types.Hash
+}
+
+type EventBalancesNotEnoughToBuyoutEq struct {
+	Phase   types.Phase
+	Account types.AccountID
+	Topics  []types.Hash
 }
 
 type EventOracleNewPrice struct {
