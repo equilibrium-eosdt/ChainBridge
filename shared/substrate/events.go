@@ -155,4 +155,11 @@ type Events struct {
 	Oracle_NewPrice                  []equilibrium.EventOracleNewPrice               // nolint:stylecheck,golint
 	Subaccounts_SubaccountCreated    []equilibrium.EventSubaccountsSubaccountCreated // nolint:stylecheck,golint
 	Subaccounts_RegisterBailsman     []equilibrium.EventSubaccountsRegisterBailsman  // nolint:stylecheck,golint
+	Vesting_Updated                  []equilibrium.EventVestingUpdated               // nolint:stylecheck,golint
+	Vesting_Completed                []equilibrium.EventVestingCompleted             // nolint:stylecheck,golint
+	Claim_Claimed                    []equilibrium.EventClaimed                      // nolint:stylecheck,golint
+	SessionManager_ValidatorAdded    []equilibrium.EventValidatorAdded               // nolint:stylecheck,golint
+	SessionManager_ValidatorRemoved  []equilibrium.EventValidatorRemoved             // nolint:stylecheck,golint
+	Whitelists_AddedToWhitelist      []equilibrium.EventAddedToWhitelist             // nolint:stylecheck,golint
+	Whitelists_RemovedFromWhitelist  []equilibrium.EventRemovedFromWhitelist         // nolint:stylecheck,golint
 }

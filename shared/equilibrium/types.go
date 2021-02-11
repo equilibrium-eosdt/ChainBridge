@@ -14,3 +14,18 @@ type AccountInfo struct {
 	Nonce    types.U32
 	Refcount types.U32
 }
+
+/// Defines the currency of a transfer.
+type Currency byte
+
+/// Represents balance value.
+type Balance types.U64
+
+/// Describes the reason for a transfer.
+type Reason byte
+
+/// Describes type of a subaccount.
+type SubAccType byte
+
+/// Represents a validator ID.
+type ValidatorID types.U64
