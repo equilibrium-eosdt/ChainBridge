@@ -29,3 +29,6 @@ type SubAccType byte
 
 /// Represents a validator ID.
 type ValidatorID types.U64
+
+/// Represents asset type from the Financial Pallet.
+type AssetType byte

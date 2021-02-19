@@ -96,3 +96,20 @@ type EventRemovedFromWhitelist struct {
 	AccountId types.AccountID
 	Topics    []types.Hash
 }
+
+type EventMetricsRecalculated struct {
+	Phase  types.Phase
+	Topics []types.Hash
+}
+
+type EventAssetMetricsRecalculated struct {
+	Phase  types.Phase
+	Asset  AssetType
+	Topics []types.Hash
+}
+
+type EventPortfolioMetricsRecalculated struct {
+	Phase     types.Phase
+	AccountId types.AccountID
+	Topics    []types.Hash
+}
