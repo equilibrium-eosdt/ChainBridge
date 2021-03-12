@@ -149,9 +149,9 @@ type Events struct {
 	MultiAccount_MultisigExecuted          []EventMultisigExecuted                         // nolint:stylecheck,golint
 	MultiAccount_MultisigCancelled         []EventMultisigCancelled                        // nolint:stylecheck,golint
 	TreasuryReward_TreasuryMinting         []EventTreasuryMinting                          // nolint:stylecheck,golint
-	Balances_Transfer                      []equilibrium.EventBalancesTransfer             // nolint:stylecheck,golint
-	Balances_DeleteAccount                 []equilibrium.EventBalancesDeleteAccount        // nolint:stylecheck,golint
-	Balances_NotEnoughToBuyoutEq           []equilibrium.EventBalancesNotEnoughToBuyoutEq  // nolint:stylecheck,golint
+	EqBalances_Transfer                    []equilibrium.EventBalancesTransfer             // nolint:stylecheck,golint
+	EqBalances_DeleteAccount               []equilibrium.EventBalancesDeleteAccount        // nolint:stylecheck,golint
+	EqBalances_NotEnoughToBuyoutEq         []equilibrium.EventBalancesNotEnoughToBuyoutEq  // nolint:stylecheck,golint
 	Oracle_NewPrice                        []equilibrium.EventOracleNewPrice               // nolint:stylecheck,golint
 	Subaccounts_SubaccountCreated          []equilibrium.EventSubaccountsSubaccountCreated // nolint:stylecheck,golint
 	Subaccounts_RegisterBailsman           []equilibrium.EventSubaccountsRegisterBailsman  // nolint:stylecheck,golint
