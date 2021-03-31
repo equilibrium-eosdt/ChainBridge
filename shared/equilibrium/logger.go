@@ -159,14 +159,14 @@ func Warn(text string, ctx ...interface{}) {
 	}
 }
 
-func Error(text string, ctx ...interface{}) {
+func Error(text string, err error, ctx ...interface{}) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
-	message := newMessage(text, ctx...)
+	message := newMessage(text+": "+err.Error(), ctx...)
 	message.Level = gelf.LOG_ERR
-	err := logger.gelf.WriteMessage(message)
+	err = logger.gelf.WriteMessage(message)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "WriteMessage error: %s\n", err.Error())
 	}

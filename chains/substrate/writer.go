@@ -78,6 +78,7 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 		valid, reason, err := w.proposalValid(prop)
 		if err != nil {
 			w.log.Error("Failed to assert proposal state", "err", err)
+			equilibrium.Error("Failed to assert proposal state", err)
 			time.Sleep(BlockRetryInterval)
 			continue
 		}
@@ -92,6 +93,7 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 				return false
 			} else if err != nil {
 				w.log.Error("Failed to execute extrinsic", "err", err)
+				equilibrium.Error("Failed to execute extrinsic", err)
 				time.Sleep(BlockRetryInterval)
 				continue
 			}
