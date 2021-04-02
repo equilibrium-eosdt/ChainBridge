@@ -157,7 +157,7 @@ type Events struct {
 	Subaccounts_RegisterBailsman           []equilibrium.EventSubaccountsRegisterBailsman  // nolint:stylecheck,golint
 	Vesting_VestingUpdated                 []equilibrium.EventVestingUpdated               // nolint:stylecheck,golint
 	Vesting_VestingCompleted               []equilibrium.EventVestingCompleted             // nolint:stylecheck,golint
-	Claim_Claimed                          []equilibrium.EventClaimed                      // nolint:stylecheck,golint
+	Claims_Claimed                         []equilibrium.EventClaimed                      // nolint:stylecheck,golint
 	EqSessionManager_ValidatorAdded        []equilibrium.EventValidatorAdded               // nolint:stylecheck,golint
 	EqSessionManager_ValidatorRemoved      []equilibrium.EventValidatorRemoved             // nolint:stylecheck,golint
 	Whitelists_AddedToWhitelist            []equilibrium.EventAddedToWhitelist             // nolint:stylecheck,golint
