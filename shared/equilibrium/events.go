@@ -55,8 +55,8 @@ type EventSubaccountsRegisterBailsman struct {
 type EventVestingUpdated struct {
 	Phase     types.Phase
 	AccountId types.AccountID
-	//Balance   Balance
-	Topics []types.Hash
+	Balance   Balance
+	Topics    []types.Hash
 }
 
 type EventVestingCompleted struct {
