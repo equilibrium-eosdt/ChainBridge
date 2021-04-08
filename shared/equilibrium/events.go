@@ -75,13 +75,13 @@ type EventClaimed struct {
 
 type EventValidatorAdded struct {
 	Phase     types.Phase
-	Validator ValidatorID
+	Validator types.AccountID
 	Topics    []types.Hash
 }
 
 type EventValidatorRemoved struct {
 	Phase     types.Phase
-	Validator ValidatorID
+	Validator types.AccountID
 	Topics    []types.Hash
 }
 
