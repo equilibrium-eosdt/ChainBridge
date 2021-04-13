@@ -5,6 +5,12 @@ import (
 	ethereum "github.com/ethereum/go-ethereum/common"
 )
 
+type EventBailsmanUnregisteredBailsman struct {
+	Phase      types.Phase
+	Who		   types.AccountID
+	Topics     []types.Hash
+}
+
 // EventBalancesTransfer is emitted when a Substrate client calls Currency::transfer.
 type EventBalancesTransfer struct {
 	Phase    types.Phase

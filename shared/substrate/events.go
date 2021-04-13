@@ -149,6 +149,7 @@ type Events struct {
 	MultiAccount_MultisigExecuted          []EventMultisigExecuted                         // nolint:stylecheck,golint
 	MultiAccount_MultisigCancelled         []EventMultisigCancelled                        // nolint:stylecheck,golint
 	TreasuryReward_TreasuryMinting         []EventTreasuryMinting                          // nolint:stylecheck,golint
+	Bailsman_UnregisteredBailsman          []equilibrium.EventBailsmanUnregisteredBailsman // nolint:stylecheck,golint
 	EqBalances_Transfer                    []equilibrium.EventBalancesTransfer             // nolint:stylecheck,golint
 	EqBalances_DeleteAccount               []equilibrium.EventBalancesDeleteAccount        // nolint:stylecheck,golint
 	EqBalances_NotEnoughToBuyoutEq         []equilibrium.EventBalancesNotEnoughToBuyoutEq  // nolint:stylecheck,golint
