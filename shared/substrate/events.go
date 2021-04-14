@@ -152,7 +152,6 @@ type Events struct {
 	Bailsman_UnregisteredBailsman          []equilibrium.EventBailsmanUnregisteredBailsman // nolint:stylecheck,golint
 	EqBalances_Transfer                    []equilibrium.EventBalancesTransfer             // nolint:stylecheck,golint
 	EqBalances_DeleteAccount               []equilibrium.EventBalancesDeleteAccount        // nolint:stylecheck,golint
-	EqBalances_NotEnoughToBuyoutEq         []equilibrium.EventBalancesNotEnoughToBuyoutEq  // nolint:stylecheck,golint
 	Oracle_NewPrice                        []equilibrium.EventOracleNewPrice               // nolint:stylecheck,golint
 	Subaccounts_SubaccountCreated          []equilibrium.EventSubaccountsSubaccountCreated // nolint:stylecheck,golint
 	Subaccounts_RegisterBailsman           []equilibrium.EventSubaccountsRegisterBailsman  // nolint:stylecheck,golint

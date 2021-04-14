@@ -28,12 +28,6 @@ type EventBalancesDeleteAccount struct {
 	Topics  []types.Hash
 }
 
-type EventBalancesNotEnoughToBuyoutEq struct {
-	Phase   types.Phase
-	Account types.AccountID
-	Topics  []types.Hash
-}
-
 type EventOracleNewPrice struct {
 	Phase     types.Phase
 	Currency  Currency
