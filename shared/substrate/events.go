@@ -162,6 +162,7 @@ type Events struct {
 	EqSessionManager_ValidatorRemoved      []equilibrium.EventValidatorRemoved             // nolint:stylecheck,golint
 	Whitelists_AddedToWhitelist            []equilibrium.EventAddedToWhitelist             // nolint:stylecheck,golint
 	Whitelists_RemovedFromWhitelist        []equilibrium.EventRemovedFromWhitelist         // nolint:stylecheck,golint
+	EqLockdrop_Lock 					   []equilibrium.EventLockdropLock  			   // nolint:stylecheck,golint
 	Financial_MetricsRecalculated          []equilibrium.EventMetricsRecalculated          // nolint:stylecheck,golint
 	Financial_AssetMetricsRecalculated     []equilibrium.EventAssetMetricsRecalculated     // nolint:stylecheck,golint
 	Financial_PortfolioMetricsRecalculated []equilibrium.EventPortfolioMetricsRecalculated // nolint:stylecheck,golint

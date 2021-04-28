@@ -5,6 +5,13 @@ import (
 	ethereum "github.com/ethereum/go-ethereum/common"
 )
 
+type EventLockdropLock struct {
+	Phase      types.Phase
+	Who		   types.AccountID
+	Amount	   Balance
+	Topics     []types.Hash
+}
+
 type EventBailsmanUnregisteredBailsman struct {
 	Phase      types.Phase
 	Who		   types.AccountID
