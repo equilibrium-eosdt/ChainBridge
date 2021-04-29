@@ -109,7 +109,7 @@ func init() {
 	app.Name = "chainbridge"
 	app.Usage = "ChainBridge"
 	app.Authors = []*cli.Author{{Name: "ChainSafe Systems 2019"}}
-	app.Version = "0.0.7"
+	app.Version = "0.0.8"
 	app.EnableBashCompletion = true
 	app.Commands = []*cli.Command{
 		&accountCommand,

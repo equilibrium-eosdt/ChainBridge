@@ -163,6 +163,7 @@ type Events struct {
 	Whitelists_AddedToWhitelist            []equilibrium.EventAddedToWhitelist             // nolint:stylecheck,golint
 	Whitelists_RemovedFromWhitelist        []equilibrium.EventRemovedFromWhitelist         // nolint:stylecheck,golint
 	EqLockdrop_Lock 					   []equilibrium.EventLockdropLock  			   // nolint:stylecheck,golint
+	EqLockdrop_Unlock 					   []equilibrium.EventLockdropLock  			   // nolint:stylecheck,golint
 	Financial_MetricsRecalculated          []equilibrium.EventMetricsRecalculated          // nolint:stylecheck,golint
 	Financial_AssetMetricsRecalculated     []equilibrium.EventAssetMetricsRecalculated     // nolint:stylecheck,golint
 	Financial_PortfolioMetricsRecalculated []equilibrium.EventPortfolioMetricsRecalculated // nolint:stylecheck,golint
