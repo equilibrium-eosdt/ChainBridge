@@ -7,6 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	erc20 "github.com/ChainSafe/ChainBridge/bindings/ERC20"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"math/big"
 	"time"
 
@@ -90,7 +92,37 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 func (w *writer) createErc20Proposal(m msg.Message) bool {
 	w.log.Info("Creating erc20 proposal", "src", m.Source, "nonce", m.DepositNonce)
 
-	data := ConstructErc20ProposalData(m.Payload[0].([]byte), m.Payload[1].([]byte))
+	resourceId := m.ResourceId
+
+	tokenAddress, err := w.erc20HandlerContract.ResourceIDToTokenContractAddress(&bind.CallOpts{From: w.conn.Keypair().CommonAddress()}, resourceId)
+	if err != nil {
+		w.log.Error("Unable to get contract address by resourceId", "err", err)
+		return false
+	}
+
+	erc20Contract, err := erc20.NewERC20(tokenAddress, w.conn.Client())
+	if err != nil {
+		w.log.Error("Error Creating ERC20 Contract From TokenAddress", "err", err)
+		return false
+	}
+
+	tokenDecimals, err := erc20Contract.Decimals(&bind.CallOpts{From: w.conn.Keypair().CommonAddress()})
+	if err != nil {
+		w.log.Error("Error Getting Token Decimals")
+		return false
+	}
+
+	amount := new(big.Int).SetBytes(m.Payload[0].([]byte))
+
+	if tokenDecimals <= 18 {
+		divisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(18 - int64(tokenDecimals)), nil)
+		amount = new(big.Int).Div(amount, divisor)
+	} else {
+		multiplier := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(tokenDecimals) - 18), nil)
+		amount = new(big.Int).Mul(amount, multiplier)
+	}
+
+	data := ConstructErc20ProposalData(amount.Bytes(), m.Payload[1].([]byte))
 	dataHash := utils.Hash(append(w.cfg.erc20HandlerContract.Bytes(), data...))
 
 	if !w.shouldVote(m, dataHash) {

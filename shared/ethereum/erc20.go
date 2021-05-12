@@ -4,6 +4,7 @@
 package utils
 
 import (
+	"github.com/ChainSafe/ChainBridge/bindings/ERC20PresetMinterPauserDecimals"
 	"math/big"
 
 	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
@@ -13,14 +14,14 @@ import (
 )
 
 // DeployMintAndApprove deploys a new erc20 contract, mints to the deployer, and approves the erc20 handler to transfer those token.
-func DeployMintApproveErc20(client *Client, erc20Handler common.Address, amount *big.Int) (common.Address, error) {
+func DeployMintApproveErc20(client *Client, erc20Handler common.Address, amount *big.Int, decimals uint8) (common.Address, error) {
 	err := client.LockNonceAndUpdate()
 	if err != nil {
 		return ZeroAddress, err
 	}
 
 	// Deploy
-	erc20Addr, tx, erc20Instance, err := ERC20.DeployERC20PresetMinterPauser(client.Opts, client.Client, "", "")
+	erc20Addr, tx, erc20Instance, err := ERC20PresetMinterPauserDecimals.DeployERC20PresetMinterPauserDecimals(client.Opts, client.Client, "", "", decimals)
 	if err != nil {
 		return ZeroAddress, err
 	}

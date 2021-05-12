@@ -109,7 +109,7 @@ func createErc20Deposit(
 
 	data := utils.ConstructErc20DepositData(destRecipient.Bytes(), amount)
 
-	// Incrememnt Nonce by one
+	// Increment Nonce by one
 	client.Opts.Nonce = client.Opts.Nonce.Add(client.Opts.Nonce, big.NewInt(1))
 	if _, err := contract.Deposit(
 		client.Opts,

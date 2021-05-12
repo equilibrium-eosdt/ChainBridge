@@ -147,7 +147,7 @@ func InitializeChain(chainCfg *core.ChainConfig, logger log15.Logger, sysErr cha
 	listener.setContracts(bridgeContract, erc20HandlerContract, erc721HandlerContract, genericHandlerContract)
 
 	writer := NewWriter(conn, cfg, logger, stop, sysErr, m)
-	writer.setContract(bridgeContract)
+	writer.setContracts(bridgeContract, erc20HandlerContract)
 
 	return &Chain{
 		cfg:      chainCfg,

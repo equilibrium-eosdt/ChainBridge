@@ -10,6 +10,7 @@ import (
 	"github.com/ChainSafe/log15"
 
 	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
+	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
 )
 
 var _ core.Writer = &writer{}
@@ -23,6 +24,7 @@ type writer struct {
 	cfg            Config
 	conn           Connection
 	bridgeContract *Bridge.Bridge // instance of bound receiver bridgeContract
+	erc20HandlerContract   *ERC20Handler.ERC20Handler
 	log            log15.Logger
 	stop           <-chan int
 	sysErr         chan<- error // Reports fatal error to core
@@ -46,9 +48,9 @@ func (w *writer) start() error {
 	return nil
 }
 
-// setContract adds the bound receiver bridgeContract to the writer
-func (w *writer) setContract(bridge *Bridge.Bridge) {
+func (w *writer) setContracts(bridge *Bridge.Bridge, erc20Handler *ERC20Handler.ERC20Handler) {
 	w.bridgeContract = bridge
+	w.erc20HandlerContract = erc20Handler
 }
 
 // ResolveMessage handles any given message based on type

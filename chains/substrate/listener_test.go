@@ -81,12 +81,16 @@ func Test_FungibleTransferEvent(t *testing.T) {
 	// Construct our expected message
 	var rId msg.ResourceId
 	subtest.QueryConst(t, context.client, "Example", "NativeTokenId", &rId)
-	amount := big.NewInt(1000000)
+
+	baseAmount := big.NewInt(10)
+	substrateAmount := new(big.Int).Mul(baseAmount, new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(9)), nil))
+	normalizedAmount := new(big.Int).Mul(baseAmount, new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil))
+
 	recipient := BobKey.PublicKey
 	context.latestOutNonce = context.latestOutNonce + 1
-	expected := msg.NewFungibleTransfer(ThisChain, ForeignChain, context.latestOutNonce, amount, rId, recipient)
+	expected := msg.NewFungibleTransfer(ThisChain, ForeignChain, context.latestOutNonce, normalizedAmount, rId, recipient)
 
-	subtest.InitiateNativeTransfer(t, context.client, types.NewU128(*amount), recipient, ForeignChain)
+	subtest.InitiateNativeTransfer(t, context.client, types.NewU128(*substrateAmount), recipient, ForeignChain)
 
 	verifyResultingMessage(t, context.router, context.lSysErr, expected)
 }

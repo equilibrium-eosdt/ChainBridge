@@ -13,8 +13,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func DeployMintApproveErc20(t *testing.T, client *utils.Client, erc20Handler common.Address, amount *big.Int) common.Address {
-	addr, err := utils.DeployMintApproveErc20(client, erc20Handler, amount)
+func DeployMintApproveErc20(t *testing.T, client *utils.Client, erc20Handler common.Address, amount *big.Int, decimals uint8) common.Address {
+	addr, err := utils.DeployMintApproveErc20(client, erc20Handler, amount, decimals)
 	if err != nil {
 		t.Fatal(err)
 	}

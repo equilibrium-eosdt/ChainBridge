@@ -107,7 +107,7 @@ func TestListener_start_stop(t *testing.T) {
 	close(stop)
 }
 
-func TestListener_Erc20DepositedEvent(t *testing.T) {
+func testTemplateListener_Erc20DepositedEvent(t *testing.T, decimals uint8) {
 	client := ethtest.NewClient(t, TestEndpoint, AliceKp)
 	contracts := deployTestContracts(t, client, aliceTestConfig.id)
 	errs := make(chan error)
@@ -116,9 +116,13 @@ func TestListener_Erc20DepositedEvent(t *testing.T) {
 	// For debugging
 	go ethtest.WatchEvent(client, contracts.BridgeAddress, utils.Deposit)
 
-	erc20Contract := ethtest.DeployMintApproveErc20(t, client, contracts.ERC20HandlerAddress, big.NewInt(100))
+	baseAmount := big.NewInt(10)
+	tokenAmount := new(big.Int).Mul(baseAmount, new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(decimals)), nil))
+	mintAmount := new(big.Int).Mul(tokenAmount, big.NewInt(2))
+	normalizedAmount := new(big.Int).Mul(baseAmount, new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil))
 
-	amount := big.NewInt(10)
+	erc20Contract := ethtest.DeployMintApproveErc20(t, client, contracts.ERC20HandlerAddress, mintAmount, decimals)
+
 	src := msg.ChainId(0)
 	dst := msg.ChainId(1)
 	resourceId := msg.ResourceIdFromSlice(append(common.LeftPadBytes(erc20Contract.Bytes(), 31), uint8(src)))
@@ -130,7 +134,7 @@ func TestListener_Erc20DepositedEvent(t *testing.T) {
 		src,
 		dst,
 		1,
-		amount,
+		normalizedAmount,
 		resourceId,
 		common.HexToAddress(BobKp.Address()).Bytes(),
 	)
@@ -143,7 +147,7 @@ func TestListener_Erc20DepositedEvent(t *testing.T) {
 
 		recipient,
 		dst,
-		amount,
+		tokenAmount,
 	)
 
 	verifyMessage(t, router, expectedMessage, errs)
@@ -153,7 +157,7 @@ func TestListener_Erc20DepositedEvent(t *testing.T) {
 		src,
 		dst,
 		2,
-		amount,
+		normalizedAmount,
 		resourceId,
 		common.HexToAddress(BobKp.Address()).Bytes(),
 	)
@@ -165,10 +169,26 @@ func TestListener_Erc20DepositedEvent(t *testing.T) {
 
 		recipient,
 		dst,
-		amount,
+		tokenAmount,
 	)
 
 	verifyMessage(t, router, expectedMessage, errs)
+}
+
+func TestListener_Erc20DepositedEvent(t *testing.T) {
+	testTemplateListener_Erc20DepositedEvent(t, 18)
+}
+
+func TestListener_Erc20DepositedEvent_10_Decimals(t *testing.T) {
+	testTemplateListener_Erc20DepositedEvent(t, 10)
+}
+
+func TestListener_Erc20DepositedEvent_0_Decimals(t *testing.T) {
+	testTemplateListener_Erc20DepositedEvent(t, 0)
+}
+
+func TestListener_Erc20DepositedEvent_22_Decimals(t *testing.T) {
+	testTemplateListener_Erc20DepositedEvent(t, 22)
 }
 
 func TestListener_Erc721DepositedEvent(t *testing.T) {

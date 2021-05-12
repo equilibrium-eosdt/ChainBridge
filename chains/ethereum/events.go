@@ -4,13 +4,15 @@
 package ethereum
 
 import (
+	"errors"
 	"fmt"
-	"math/big"
-
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"math/big"
 
 	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
+
+	erc20 "github.com/ChainSafe/ChainBridge/bindings/ERC20"
 )
 
 func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce) (msg.Message, error) {
@@ -22,9 +24,33 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 		return msg.Message{}, err
 	}
 
-	//oldAmount := record.Amount.String()
-	factor := big.NewInt(1000000000)
-	amount := new(big.Int).Div(record.Amount, factor)
+	tokenAddress := record.TokenAddress
+	erc20Contract, err := erc20.NewERC20(tokenAddress, l.conn.Client())
+	if err != nil {
+		l.log.Error("Error Creating ERC20 Contract From TokenAddress", "err", err)
+		return msg.Message{}, err
+	}
+
+	tokenDecimals, err := erc20Contract.Decimals(&bind.CallOpts{From: l.conn.Keypair().CommonAddress()})
+	if err != nil {
+		l.log.Error("Error Getting Token Decimals")
+		return msg.Message{}, err
+	}
+
+	if tokenDecimals > 36 {
+		l.log.Error("Token Has Very Strange Decimals Count")
+		return msg.Message{}, errors.New("token has very strange decimals count")
+	}
+
+	//// make amount always be 18 decimals
+	amount := record.Amount
+	if tokenDecimals <= 18 {
+		multiplier := new(big.Int).Exp(big.NewInt(10), big.NewInt(18 - int64(tokenDecimals)), nil)
+		amount = new(big.Int).Mul(amount, multiplier)
+	} else {
+		divisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(tokenDecimals) - 18), nil)
+		amount = new(big.Int).Div(amount, divisor)
+	}
 
 	direction := "E->S"
 	//equilibrium.Info(fmt.Sprintf("(%s) Scale value %s -> %s", direction, oldAmount, amount.String()))

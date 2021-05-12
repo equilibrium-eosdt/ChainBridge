@@ -9,13 +9,12 @@ require (
 	github.com/aristanetworks/goarista v0.0.0-20200609010056-95bcf8053598 // indirect
 	github.com/centrifuge/go-substrate-rpc-client v2.0.0+incompatible
 	github.com/deckarep/golang-set v1.7.1 // indirect
-	github.com/ethereum/go-ethereum v1.9.17
+	github.com/ethereum/go-ethereum v1.9.23
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/prometheus/client_golang v1.4.1
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli/v2 v2.2.0
 	go.mongodb.org/mongo-driver v1.4.5
-	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
 	gopkg.in/Graylog2/go-gelf.v2 v2.0.0-20191017102106-1550ee647df0
 )

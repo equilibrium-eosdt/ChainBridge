@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
+	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
 	utils "github.com/ChainSafe/ChainBridge/shared/ethereum"
 	ethtest "github.com/ChainSafe/ChainBridge/shared/ethereum/testing"
 	"github.com/ChainSafe/chainbridge-utils/msg"
@@ -39,8 +40,11 @@ func createTestWriter(t *testing.T, cfg *Config, errs chan<- error) (*writer, fu
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	writer.setContract(bridge)
+	erc20HandlerContract, err := ERC20Handler.NewERC20Handler(cfg.erc20HandlerContract, conn.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	writer.setContracts(bridge, erc20HandlerContract)
 
 	err = writer.start()
 	if err != nil {
@@ -123,7 +127,7 @@ func TestWriter_start_stop(t *testing.T) {
 	close(stop)
 }
 
-func TestCreateAndExecuteErc20DepositProposal(t *testing.T) {
+func testTemplateCreateAndExecuteErc20DepositProposal(t *testing.T, decimals uint8) {
 	client := ethtest.NewClient(t, TestEndpoint, AliceKp)
 	contracts := deployTestContracts(t, client, TestChainId)
 	writerA, writerB, stopA, stopB, errA, errB := createWriters(t, client, contracts)
@@ -133,14 +137,20 @@ func TestCreateAndExecuteErc20DepositProposal(t *testing.T) {
 	defer writerA.conn.Close()
 	defer writerB.conn.Close()
 
-	erc20Address := ethtest.DeployMintApproveErc20(t, client, contracts.ERC20HandlerAddress, big.NewInt(100))
-	ethtest.FundErc20Handler(t, client, contracts.ERC20HandlerAddress, erc20Address, big.NewInt(100))
+
+	baseAmount := big.NewInt(10)
+	tokenAmount := new(big.Int).Mul(baseAmount, new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(decimals)), nil))
+	mintAmount := new(big.Int).Mul(tokenAmount, big.NewInt(2))
+	normalizedAmount := new(big.Int).Mul(baseAmount, new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil))
+
+	erc20Address := ethtest.DeployMintApproveErc20(t, client, contracts.ERC20HandlerAddress, mintAmount, decimals)
+	ethtest.FundErc20Handler(t, client, contracts.ERC20HandlerAddress, erc20Address, mintAmount)
 
 	// Create initial transfer message
 	resourceId := msg.ResourceIdFromSlice(append(common.LeftPadBytes(erc20Address.Bytes(), 31), 0))
 	recipient := ethcrypto.PubkeyToAddress(BobKp.PrivateKey().PublicKey)
-	amount := big.NewInt(10)
-	m := msg.NewFungibleTransfer(1, 0, 0, amount, resourceId, recipient.Bytes())
+
+	m := msg.NewFungibleTransfer(1, 0, 0, normalizedAmount, resourceId, recipient.Bytes())
 	ethtest.RegisterResource(t, client, contracts.BridgeAddress, contracts.ERC20HandlerAddress, resourceId, erc20Address)
 	// Helpful for debugging
 	go ethtest.WatchEvent(client, contracts.BridgeAddress, utils.ProposalEvent)
@@ -148,7 +158,23 @@ func TestCreateAndExecuteErc20DepositProposal(t *testing.T) {
 
 	routeMessageAndWait(t, client, writerA, writerB, m, errA, errB)
 
-	ethtest.Erc20AssertBalance(t, client, amount, erc20Address, recipient)
+	ethtest.Erc20AssertBalance(t, client, tokenAmount, erc20Address, recipient)
+}
+
+func TestCreateAndExecuteErc20DepositProposal(t *testing.T) {
+	testTemplateCreateAndExecuteErc20DepositProposal(t, 18)
+}
+
+func TestCreateAndExecuteErc20DepositProposal_10_Decimals(t *testing.T) {
+	testTemplateCreateAndExecuteErc20DepositProposal(t, 10)
+}
+
+func TestCreateAndExecuteErc20DepositProposal_0_Decimals(t *testing.T) {
+	testTemplateCreateAndExecuteErc20DepositProposal(t, 0)
+}
+
+func TestCreateAndExecuteErc20DepositProposal_22_Decimals(t *testing.T) {
+	testTemplateCreateAndExecuteErc20DepositProposal(t, 22)
 }
 
 func TestCreateAndExecuteErc721Proposal(t *testing.T) {
@@ -232,7 +258,7 @@ func TestDuplicateMessage(t *testing.T) {
 	defer writerA.conn.Close()
 	defer writerB.conn.Close()
 
-	erc20Address := ethtest.DeployMintApproveErc20(t, client, contracts.ERC20HandlerAddress, big.NewInt(100))
+	erc20Address := ethtest.DeployMintApproveErc20(t, client, contracts.ERC20HandlerAddress, big.NewInt(100), 18)
 	ethtest.FundErc20Handler(t, client, contracts.ERC20HandlerAddress, erc20Address, big.NewInt(100))
 
 	// Create initial transfer message
