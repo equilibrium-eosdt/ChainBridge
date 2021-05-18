@@ -5,6 +5,7 @@ package ethereum
 
 import (
 	"context"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 	"testing"
 	"time"
@@ -75,12 +76,12 @@ func routeMessageAndWait(t *testing.T, client *utils.Client, alice, bob *writer,
 	}
 
 	// Alice processes the message, then waits to execute
-	if ok := alice.ResolveMessage(m); !ok {
+	if ok := alice.ResolveMessage(m, make(core.MessageContext)); !ok {
 		t.Fatal("Alice failed to resolve the message")
 	}
 
 	// Now Bob receives the same message and also waits to execute
-	if ok := bob.ResolveMessage(m); !ok {
+	if ok := bob.ResolveMessage(m, make(core.MessageContext)); !ok {
 		t.Fatal("Bob failed to resolve the message")
 	}
 
@@ -291,10 +292,10 @@ func TestDuplicateMessage(t *testing.T) {
 	}
 
 	// Try processing the same message again
-	if ok := writerA.ResolveMessage(m); ok {
+	if ok := writerA.ResolveMessage(m, make(core.MessageContext)); ok {
 		t.Fatalf("%s should have not voted", writerA.cfg.name)
 	}
-	if ok := writerB.ResolveMessage(m); ok {
+	if ok := writerB.ResolveMessage(m, make(core.MessageContext)); ok {
 		t.Fatalf("%s should have not voted", writerB.cfg.name)
 	}
 

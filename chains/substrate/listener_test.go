@@ -5,6 +5,7 @@ package substrate
 
 import (
 	"fmt"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 	"reflect"
 	"testing"
@@ -23,7 +24,7 @@ type mockRouter struct {
 	msgs chan msg.Message
 }
 
-func (r *mockRouter) Send(message msg.Message) error {
+func (r *mockRouter) Send(message msg.Message, _ core.MessageContext) error {
 	r.msgs <- message
 	return nil
 }

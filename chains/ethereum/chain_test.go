@@ -114,7 +114,7 @@ func TestChain_WriterShutdownOnFailure(t *testing.T) {
 	message := msg.NewFungibleTransfer(src, dst, 1, amount, resourceId, recipient.Bytes())
 
 	for i := 0; i < 5; i++ {
-		err = chain.listener.router.Send(message)
+		err = chain.listener.router.Send(message, make(core.MessageContext))
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -4,6 +4,7 @@
 package substrate
 
 import (
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 	"reflect"
 	"testing"
@@ -72,7 +73,7 @@ func TestWriter_ResolveMessage_FungibleProposal(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, nil, false)
 
 	// Submit the message for processing
-	ok := context.writerAlice.ResolveMessage(m)
+	ok := context.writerAlice.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatal("Alice failed to resolve the message")
 	}
@@ -85,7 +86,7 @@ func TestWriter_ResolveMessage_FungibleProposal(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, singleVoteState, true)
 
 	// Submit a second vote from Bob this time
-	ok = context.writerBob.ResolveMessage(m)
+	ok = context.writerBob.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatalf("Bob failed to resolve the message")
 	}
@@ -134,7 +135,7 @@ func TestWriter_ResolveMessage_NonFungibleProposal(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, nil, false)
 
 	// Submit the message for processing
-	ok := context.writerAlice.ResolveMessage(m)
+	ok := context.writerAlice.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatal("Alice failed to resolve the message")
 	}
@@ -147,7 +148,7 @@ func TestWriter_ResolveMessage_NonFungibleProposal(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, singleVoteState, true)
 
 	// Submit a second vote from Bob this time
-	ok = context.writerBob.ResolveMessage(m)
+	ok = context.writerBob.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatalf("Bob failed to resolve the message")
 	}
@@ -192,7 +193,7 @@ func TestWriter_ResolveMessage_GenericProposal(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, nil, false)
 
 	// Submit the message for processing
-	ok := context.writerAlice.ResolveMessage(m)
+	ok := context.writerAlice.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatal("Alice failed to resolve the message")
 	}
@@ -205,7 +206,7 @@ func TestWriter_ResolveMessage_GenericProposal(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, singleVoteState, true)
 
 	// Submit a second vote from Bob this time
-	ok = context.writerBob.ResolveMessage(m)
+	ok = context.writerBob.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatalf("Bob failed to resolve the message")
 	}
@@ -248,7 +249,7 @@ func TestWriter_ResolveMessage_Duplicate(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, nil, false)
 
 	// Submit the message for processing
-	ok := context.writerAlice.ResolveMessage(m)
+	ok := context.writerAlice.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatal("Alice failed to resolve the message")
 	}
@@ -261,7 +262,7 @@ func TestWriter_ResolveMessage_Duplicate(t *testing.T) {
 	assertProposalState(t, context.writerAlice.conn, prop, singleVoteState, true)
 
 	// Submit a second vote from Bob this time
-	ok = context.writerAlice.ResolveMessage(m)
+	ok = context.writerAlice.ResolveMessage(m, make(core.MessageContext))
 	if !ok {
 		t.Fatalf("Bob failed to resolve the message")
 	}

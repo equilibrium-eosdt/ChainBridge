@@ -5,6 +5,7 @@ package ethereum
 
 import (
 	"fmt"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 	"reflect"
 	"testing"
@@ -27,7 +28,7 @@ type MockRouter struct {
 	msgs chan msg.Message
 }
 
-func (r *MockRouter) Send(message msg.Message) error {
+func (r *MockRouter) Send(message msg.Message, _ core.MessageContext) error {
 	r.msgs <- message
 	return nil
 }
