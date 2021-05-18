@@ -18,3 +18,5 @@ require (
 	go.mongodb.org/mongo-driver v1.4.5
 	gopkg.in/Graylog2/go-gelf.v2 v2.0.0-20191017102106-1550ee647df0
 )
+
+replace github.com/ChainSafe/chainbridge-utils v1.0.5 => github.com/equilibrium-eosdt/chainbridge-utils v0.0.0-20210517160540-c9475f17dc29

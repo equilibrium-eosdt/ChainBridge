@@ -5,6 +5,7 @@ package substrate
 
 import (
 	"fmt"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 
 	events "github.com/ChainSafe/chainbridge-substrate-events"
@@ -15,7 +16,7 @@ import (
 )
 
 type eventName string
-type eventHandler func(interface{}, log15.Logger) (msg.Message, error)
+type eventHandler func(interface{}, core.MessageContext, log15.Logger) (msg.Message, core.MessageContext, error)
 
 const FungibleTransfer eventName = "FungibleTransfer"
 const NonFungibleTransfer eventName = "NonFungibleTransfer"
@@ -30,15 +31,16 @@ var Subscriptions = []struct {
 	{GenericTransfer, genericTransferHandler},
 }
 
-func fungibleTransferHandler(evtI interface{}, log log15.Logger) (msg.Message, error) {
+func fungibleTransferHandler(evtI interface{}, messageContext core.MessageContext, log log15.Logger) (msg.Message, core.MessageContext, error) {
 	evt, ok := evtI.(events.EventFungibleTransfer)
 	if !ok {
-		return msg.Message{}, fmt.Errorf("failed to cast EventFungibleTransfer type")
+		return msg.Message{}, make(core.MessageContext), fmt.Errorf("failed to cast EventFungibleTransfer type")
 	}
 
 	resourceId := msg.ResourceId(evt.ResourceId)
 	log.Info("Got fungible transfer event!", "destination", evt.Destination, "resourceId", resourceId.Hex(), "amount", evt.Amount)
-	equilibrium.EventFungibleTransfer("EventFound", fmt.Sprintf("(S->E) Handle FungibleTransferEvent"), evt)
+
+	equilibrium.EventFungibleTransfer("EventFound", fmt.Sprintf("(S->E) Handle FungibleTransferEvent"), evt, messageContext)
 
 	return msg.NewFungibleTransfer(
 		0, // Unset
@@ -47,13 +49,13 @@ func fungibleTransferHandler(evtI interface{}, log log15.Logger) (msg.Message, e
 		evt.Amount.Int,
 		resourceId,
 		evt.Recipient,
-	), nil
+	), messageContext, nil
 }
 
-func nonFungibleTransferHandler(evtI interface{}, log log15.Logger) (msg.Message, error) {
+func nonFungibleTransferHandler(evtI interface{}, messageContext core.MessageContext, log log15.Logger) (msg.Message, core.MessageContext, error) {
 	evt, ok := evtI.(events.EventNonFungibleTransfer)
 	if !ok {
-		return msg.Message{}, fmt.Errorf("failed to cast EventNonFungibleTransfer type")
+		return msg.Message{}, make(core.MessageContext), fmt.Errorf("failed to cast EventNonFungibleTransfer type")
 	}
 
 	log.Info("Got non-fungible transfer event!", "destination", evt.Destination, "resourceId", evt.ResourceId)
@@ -66,13 +68,13 @@ func nonFungibleTransferHandler(evtI interface{}, log log15.Logger) (msg.Message
 		big.NewInt(0).SetBytes(evt.TokenId[:]),
 		evt.Recipient,
 		evt.Metadata,
-	), nil
+	), messageContext, nil
 }
 
-func genericTransferHandler(evtI interface{}, log log15.Logger) (msg.Message, error) {
+func genericTransferHandler(evtI interface{}, messageContext core.MessageContext, log log15.Logger) (msg.Message, core.MessageContext, error) {
 	evt, ok := evtI.(events.EventGenericTransfer)
 	if !ok {
-		return msg.Message{}, fmt.Errorf("failed to cast EventGenericTransfer type")
+		return msg.Message{}, make(core.MessageContext), fmt.Errorf("failed to cast EventGenericTransfer type")
 	}
 
 	log.Info("Got generic transfer event!", "destination", evt.Destination, "resourceId", evt.ResourceId)
@@ -83,5 +85,5 @@ func genericTransferHandler(evtI interface{}, log log15.Logger) (msg.Message, er
 		msg.Nonce(evt.DepositNonce),
 		msg.ResourceId(evt.ResourceId),
 		evt.Metadata,
-	), nil
+	), messageContext, nil
 }

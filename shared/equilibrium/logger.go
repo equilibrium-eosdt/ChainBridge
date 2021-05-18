@@ -3,6 +3,7 @@ package equilibrium
 import (
 	"encoding/hex"
 	"fmt"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 	"os"
 	"time"
@@ -52,7 +53,7 @@ func CreateGrayLogger(addr, environment string) error {
 //      func Value() *big.Int
 //      func To() *common.Address
 // }
-func Message(action, text string, m msg.Message, tx *types.Transaction, data []byte) {
+func Message(action, text string, m msg.Message, tx *types.Transaction, data []byte, messageContext core.MessageContext) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
@@ -107,6 +108,10 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 		}
 	}
 
+	for name, value := range messageContext {
+		ctx = append(ctx, name, value)
+	}
+
 	Info(text, ctx...)
 }
 
@@ -117,7 +122,7 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 //  	Amount       types.U256
 //  	Recipient    types.Bytes
 // }
-func EventFungibleTransfer(action, text string, e events.EventFungibleTransfer) {
+func EventFungibleTransfer(action, text string, e events.EventFungibleTransfer, messageContext core.MessageContext) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
@@ -129,6 +134,9 @@ func EventFungibleTransfer(action, text string, e events.EventFungibleTransfer) 
 	ctx = append(ctx, "resource_id", hex.EncodeToString(e.ResourceId[:]))
 	ctx = append(ctx, "value", e.Amount.Int.String())
 	ctx = append(ctx, "recipient", hex.EncodeToString(e.Recipient))
+	for name, value := range messageContext {
+		ctx = append(ctx, name, value)
+	}
 	Info(text, ctx...)
 }
 

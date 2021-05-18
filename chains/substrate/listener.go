@@ -6,7 +6,9 @@ package substrate
 import (
 	"errors"
 	"fmt"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
+	"strconv"
 	"time"
 
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
@@ -201,35 +203,39 @@ func (l *listener) processEvents(hash types.Hash) error {
 		return err
 	}
 
-	l.handleEvents(e)
+	l.handleEvents(e, hash)
 	l.log.Trace("Finished processing events", "block", hash.Hex())
 
 	return nil
 }
 
 // handleEvents calls the associated handler for all registered event types
-func (l *listener) handleEvents(evts utils.Events) {
+func (l *listener) handleEvents(evts utils.Events, blockHash types.Hash) {
 	if l.subscriptions[FungibleTransfer] != nil {
 		for _, evt := range evts.ChainBridge_FungibleTransfer {
 			l.log.Trace("Handling FungibleTransfer event")
 			factor := big.NewInt(1000000000)
-			//oldAmount := evt.Amount.Int.String()
 			amount := new(big.Int).Mul(evt.Amount.Int, factor)
-			//equilibrium.Info(fmt.Sprintf("(S->E) Scale value %s -> %s", oldAmount, amount.String()))
 			evt.Amount = types.NewU256(*amount)
-			l.submitMessage(l.subscriptions[FungibleTransfer](evt, l.log))
+			
+			messageContext := core.MessageContext{
+				"substrate_block_hash": blockHash.Hex(),
+				"substrate_extrinsic_index": strconv.FormatUint(uint64(evt.Phase.AsApplyExtrinsic), 10),
+			}
+
+			l.submitMessage(l.subscriptions[FungibleTransfer](evt, messageContext, l.log))
 		}
 	}
 	if l.subscriptions[NonFungibleTransfer] != nil {
 		for _, evt := range evts.ChainBridge_NonFungibleTransfer {
 			l.log.Trace("Handling NonFungibleTransfer event")
-			l.submitMessage(l.subscriptions[NonFungibleTransfer](evt, l.log))
+			l.submitMessage(l.subscriptions[NonFungibleTransfer](evt, make(core.MessageContext), l.log))
 		}
 	}
 	if l.subscriptions[GenericTransfer] != nil {
 		for _, evt := range evts.ChainBridge_GenericTransfer {
 			l.log.Trace("Handling GenericTransfer event")
-			l.submitMessage(l.subscriptions[GenericTransfer](evt, l.log))
+			l.submitMessage(l.subscriptions[GenericTransfer](evt, make(core.MessageContext), l.log))
 		}
 	}
 
@@ -243,13 +249,13 @@ func (l *listener) handleEvents(evts utils.Events) {
 }
 
 // submitMessage inserts the chainId into the msg and sends it to the router
-func (l *listener) submitMessage(m msg.Message, err error) {
+func (l *listener) submitMessage(m msg.Message, messageContext core.MessageContext, err error) {
 	if err != nil {
 		log15.Error("Critical error processing event", "err", err)
 		return
 	}
 	m.Source = l.chainId
-	err = l.router.Send(m)
+	err = l.router.Send(m, messageContext)
 	if err != nil {
 		log15.Error("Failed to process event", "err", err)
 	}

@@ -4,11 +4,12 @@
 package chains
 
 import (
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 )
 
 type Router interface {
-	Send(message msg.Message) error
+	Send(message msg.Message, context core.MessageContext) error
 }
 
 //type Writer interface {

@@ -6,6 +6,7 @@ package ethereum
 import (
 	"errors"
 	"fmt"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"math/big"
@@ -15,7 +16,7 @@ import (
 	erc20 "github.com/ChainSafe/ChainBridge/bindings/ERC20"
 )
 
-func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce) (msg.Message, error) {
+func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce, messageContext core.MessageContext) (msg.Message, error) {
 	l.log.Info("Handling fungible deposit event", "dest", destId, "nonce", nonce)
 
 	record, err := l.erc20HandlerContract.GetDepositRecord(&bind.CallOpts{From: l.conn.Keypair().CommonAddress()}, uint64(nonce), uint8(destId))
@@ -65,7 +66,7 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 	)
 
 	equilibrium.Message("EventFound", fmt.Sprintf("(%s) Handle Erc20DepositedEvent", direction),
-		result, nil, nil)
+		result, nil, nil, messageContext)
 
 	return result, nil
 }

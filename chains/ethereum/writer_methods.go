@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	erc20 "github.com/ChainSafe/ChainBridge/bindings/ERC20"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"math/big"
 	"time"
@@ -64,7 +65,7 @@ func (w *writer) hasVoted(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte)
 	return hasVoted
 }
 
-func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
+func (w *writer) shouldVote(m msg.Message, dataHash [32]byte, messageContext core.MessageContext) bool {
 	direction := "S->E"
 	action := "Info"
 
@@ -72,7 +73,7 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
 		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", direction),
-			m, nil, dataHash[:])
+			m, nil, dataHash[:], messageContext)
 		return false
 	}
 
@@ -80,7 +81,7 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
 		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", direction),
-			m, nil, dataHash[:])
+			m, nil, dataHash[:], messageContext)
 		return false
 	}
 
@@ -89,7 +90,7 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte) bool {
 
 // createErc20Proposal creates an Erc20 proposal.
 // Returns true if the proposal is successfully created or is complete
-func (w *writer) createErc20Proposal(m msg.Message) bool {
+func (w *writer) createErc20Proposal(m msg.Message, messageContext core.MessageContext) bool {
 	w.log.Info("Creating erc20 proposal", "src", m.Source, "nonce", m.DepositNonce)
 
 	resourceId := m.ResourceId
@@ -125,7 +126,7 @@ func (w *writer) createErc20Proposal(m msg.Message) bool {
 	data := ConstructErc20ProposalData(amount.Bytes(), m.Payload[1].([]byte))
 	dataHash := utils.Hash(append(w.cfg.erc20HandlerContract.Bytes(), data...))
 
-	if !w.shouldVote(m, dataHash) {
+	if !w.shouldVote(m, dataHash, messageContext) {
 		return false
 	}
 
@@ -137,9 +138,9 @@ func (w *writer) createErc20Proposal(m msg.Message) bool {
 	}
 
 	// watch for execution event
-	go w.watchThenExecute(m, data, dataHash, latestBlock)
+	go w.watchThenExecute(m, data, dataHash, latestBlock, messageContext)
 
-	w.voteProposal(m, dataHash)
+	w.voteProposal(m, dataHash, messageContext)
 
 	return true
 }
@@ -152,7 +153,7 @@ func (w *writer) createErc721Proposal(m msg.Message) bool {
 	data := ConstructErc721ProposalData(m.Payload[0].([]byte), m.Payload[1].([]byte), m.Payload[2].([]byte))
 	dataHash := utils.Hash(append(w.cfg.erc721HandlerContract.Bytes(), data...))
 
-	if !w.shouldVote(m, dataHash) {
+	if !w.shouldVote(m, dataHash, make(core.MessageContext)) {
 		return false
 	}
 
@@ -164,9 +165,9 @@ func (w *writer) createErc721Proposal(m msg.Message) bool {
 	}
 
 	// watch for execution event
-	go w.watchThenExecute(m, data, dataHash, latestBlock)
+	go w.watchThenExecute(m, data, dataHash, latestBlock, make(core.MessageContext))
 
-	w.voteProposal(m, dataHash)
+	w.voteProposal(m, dataHash, make(core.MessageContext))
 
 	return true
 }
@@ -181,7 +182,7 @@ func (w *writer) createGenericDepositProposal(m msg.Message) bool {
 	toHash := append(w.cfg.genericHandlerContract.Bytes(), data...)
 	dataHash := utils.Hash(toHash)
 
-	if !w.shouldVote(m, dataHash) {
+	if !w.shouldVote(m, dataHash, make(core.MessageContext)) {
 		return false
 	}
 
@@ -193,15 +194,15 @@ func (w *writer) createGenericDepositProposal(m msg.Message) bool {
 	}
 
 	// watch for execution event
-	go w.watchThenExecute(m, data, dataHash, latestBlock)
+	go w.watchThenExecute(m, data, dataHash, latestBlock, make(core.MessageContext))
 
-	w.voteProposal(m, dataHash)
+	w.voteProposal(m, dataHash, make(core.MessageContext))
 
 	return true
 }
 
 // watchThenExecute watches for the latest block and executes once the matching finalized event is found
-func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte, latestBlock *big.Int) {
+func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte, latestBlock *big.Int, messageContext core.MessageContext) {
 	w.log.Info("Watching for finalization event", "src", m.Source, "nonce", m.DepositNonce)
 
 	// watching for the latest block, querying and matching the finalized event will be retried up to ExecuteBlockWatchLimit times
@@ -243,7 +244,7 @@ func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte,
 				if m.Source == msg.ChainId(sourceId) &&
 					m.DepositNonce.Big().Uint64() == depositNonce &&
 					utils.IsFinalized(uint8(status)) {
-					w.executeProposal(m, data, dataHash)
+					w.executeProposal(m, data, dataHash, messageContext)
 					return
 				} else {
 					w.log.Trace("Ignoring event", "src", sourceId, "nonce", depositNonce)
@@ -258,7 +259,7 @@ func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte,
 
 // voteProposal submits a vote proposal
 // a vote proposal will try to be submitted up to the TxRetryLimit times
-func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
+func (w *writer) voteProposal(m msg.Message, dataHash [32]byte, messageContext core.MessageContext) {
 	direction := "S->E"
 	for i := 0; i < TxRetryLimit; i++ {
 		select {
@@ -283,7 +284,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			if err == nil {
 				w.log.Info("Submitted proposal vote", "tx", tx.Hash(), "src", m.Source, "depositNonce", m.DepositNonce)
 				equilibrium.Message("ProposalVote", fmt.Sprintf("(%s) SubmitTx ProposalVote", direction),
-					m, tx, dataHash[:])
+					m, tx, dataHash[:], messageContext)
 				if w.metrics != nil {
 					w.metrics.VotesSubmitted.Inc()
 				}
@@ -300,7 +301,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal voting complete on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal voting complete on chain", direction),
-					m, tx, dataHash[:])
+					m, tx, dataHash[:], messageContext)
 				return
 			}
 		}
@@ -310,7 +311,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte) {
 }
 
 // executeProposal executes the proposal
-func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) {
+func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte, messageContext core.MessageContext) {
 	direction := "S->E"
 	for i := 0; i < TxRetryLimit; i++ {
 		select {
@@ -335,7 +336,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			if err == nil {
 				w.log.Info("Submitted proposal execution", "tx", tx.Hash(), "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("ProposalExecute", fmt.Sprintf("(%s) SubmitTx ProposalExecute", direction),
-					m, tx, dataHash[:])
+					m, tx, dataHash[:], messageContext)
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
 				w.log.Error("Nonce too low, will retry")
@@ -350,7 +351,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte) 
 			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash) {
 				w.log.Info("Proposal finalized on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal finalized on chain", direction),
-					m, tx, dataHash[:])
+					m, tx, dataHash[:], messageContext)
 				return
 			}
 		}

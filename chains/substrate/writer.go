@@ -44,7 +44,7 @@ func (w *writer) start() error {
 	return nil
 }
 
-func (w *writer) ResolveMessage(m msg.Message) bool {
+func (w *writer) ResolveMessage(m msg.Message, context core.MessageContext) bool {
 	var prop *proposal
 	var err error
 
@@ -87,7 +87,7 @@ func (w *writer) ResolveMessage(m msg.Message) bool {
 		if valid {
 			w.log.Trace("Acknowledging proposal on chain", "nonce", prop.depositNonce, "source", prop.sourceId, "resource", fmt.Sprintf("%x", prop.resourceId), "method", prop.method)
 			equilibrium.Message("AcknowledgeProposal", fmt.Sprintf("(%s) SubmitTx AcknowledgeProposal", direction),
-				m, nil, propKey)
+				m, nil, propKey, context)
 			err = w.conn.SubmitTx(AcknowledgeProposal, prop.depositNonce, prop.sourceId, prop.resourceId, prop.call)
 			if err != nil && err.Error() == TerminatedError.Error() {
 				return false

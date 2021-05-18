@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 	"time"
 
@@ -183,8 +184,12 @@ func (l *listener) getDepositEventsForBlock(latestBlock *big.Int) error {
 			return fmt.Errorf("failed to get handler from resource ID %x", rId)
 		}
 
+		messageContext := core.MessageContext{
+			"ethereum_tx_hash": log.TxHash.Hex(),
+		}
+
 		if addr == l.cfg.erc20HandlerContract {
-			m, err = l.handleErc20DepositedEvent(destId, nonce)
+			m, err = l.handleErc20DepositedEvent(destId, nonce, messageContext)
 		} else if addr == l.cfg.erc721HandlerContract {
 			m, err = l.handleErc721DepositedEvent(destId, nonce)
 		} else if addr == l.cfg.genericHandlerContract {
@@ -198,7 +203,7 @@ func (l *listener) getDepositEventsForBlock(latestBlock *big.Int) error {
 			return err
 		}
 
-		err = l.router.Send(m)
+		err = l.router.Send(m, messageContext)
 		if err != nil {
 			l.log.Error("subscription error: failed to route message", "err", err)
 		}

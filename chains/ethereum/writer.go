@@ -55,12 +55,12 @@ func (w *writer) setContracts(bridge *Bridge.Bridge, erc20Handler *ERC20Handler.
 
 // ResolveMessage handles any given message based on type
 // A bool is returned to indicate failure/success, this should be ignored except for within tests.
-func (w *writer) ResolveMessage(m msg.Message) bool {
+func (w *writer) ResolveMessage(m msg.Message, context core.MessageContext) bool {
 	w.log.Info("Attempting to resolve message", "type", m.Type, "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce, "rId", m.ResourceId.Hex())
 
 	switch m.Type {
 	case msg.FungibleTransfer:
-		return w.createErc20Proposal(m)
+		return w.createErc20Proposal(m, context)
 	case msg.NonFungibleTransfer:
 		return w.createErc721Proposal(m)
 	case msg.GenericTransfer:
