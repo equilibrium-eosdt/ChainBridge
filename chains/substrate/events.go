@@ -40,19 +40,21 @@ func fungibleTransferHandler(evtI interface{}, messageContext core.MessageContex
 	resourceId := msg.ResourceId(evt.ResourceId)
 	log.Info("Got fungible transfer event!", "destination", evt.Destination, "resourceId", resourceId.Hex(), "amount", evt.Amount)
 
-	equilibrium.EventFungibleTransfer("EventFound", fmt.Sprintf("(S->E) Handle FungibleTransferEvent"), evt, messageContext)
-
 	factor := big.NewInt(1000000000)
 	amount := new(big.Int).Mul(evt.Amount.Int, factor)
 
-	return msg.NewFungibleTransfer(
+	message := msg.NewFungibleTransfer(
 		0, // Unset
 		msg.ChainId(evt.Destination),
 		msg.Nonce(evt.DepositNonce),
 		amount,
 		resourceId,
 		evt.Recipient,
-	), messageContext, nil
+	)
+
+	equilibrium.Message("EventFound", "(S->E) Handle FungibleTransferEvent", message, nil, nil, messageContext)
+
+	return message, messageContext, nil
 }
 
 func nonFungibleTransferHandler(evtI interface{}, messageContext core.MessageContext, log log15.Logger) (msg.Message, core.MessageContext, error) {

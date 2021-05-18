@@ -8,7 +8,6 @@ import (
 	"os"
 	"time"
 
-	events "github.com/ChainSafe/chainbridge-substrate-events"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ethereum/go-ethereum/core/types"
 	"gopkg.in/Graylog2/go-gelf.v2/gelf"
@@ -52,6 +51,7 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 	ctx = append(ctx, "nonce", m.DepositNonce)
 	ctx = append(ctx, "type", m.Type)
 	ctx = append(ctx, "resource_id", hex.EncodeToString(m.ResourceId[:]))
+	ctx = append(ctx, "service", "bridge")
 
 	if m.Type == msg.FungibleTransfer {
 		if len(m.Payload) > 0 {
@@ -91,28 +91,10 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 		ctx = append(ctx, name, value)
 	}
 
-	Info(text, ctx...)
+	info(text, ctx...)
 }
 
-func EventFungibleTransfer(action, text string, e events.EventFungibleTransfer, messageContext core.MessageContext) {
-	if logger == nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
-		return
-	}
-	ctx := make([]interface{}, 0)
-	ctx = append(ctx, "action", action)
-	ctx = append(ctx, "destination_chain", e.Destination)
-	ctx = append(ctx, "nonce", e.DepositNonce)
-	ctx = append(ctx, "resource_id", hex.EncodeToString(e.ResourceId[:]))
-	ctx = append(ctx, "value", e.Amount.Int.String())
-	ctx = append(ctx, "recipient", hex.EncodeToString(e.Recipient))
-	for name, value := range messageContext {
-		ctx = append(ctx, name, value)
-	}
-	Info(text, ctx...)
-}
-
-func Info(text string, ctx ...interface{}) {
+func info(text string, ctx ...interface{}) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
@@ -120,19 +102,6 @@ func Info(text string, ctx ...interface{}) {
 	message := newMessage(text, ctx...)
 	message.Level = gelf.LOG_INFO
 	_, _ = fmt.Fprintf(os.Stdout, "==== Graylog: %v\n", message)
-	err := logger.gelf.WriteMessage(message)
-	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "WriteMessage error: %s\n", err.Error())
-	}
-}
-
-func Warn(text string, ctx ...interface{}) {
-	if logger == nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
-		return
-	}
-	message := newMessage(text, ctx...)
-	message.Level = gelf.LOG_WARNING
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "WriteMessage error: %s\n", err.Error())
@@ -167,7 +136,6 @@ func newMessage(text string, ctx ...interface{}) *gelf.Message {
 		Full:     text,
 		TimeUnix: float64(time.Now().UnixNano()) / float64(time.Second),
 		Level:    gelf.LOG_INFO,
-		Facility: "Equilibrium",
 		Extra:    attrs,
 	}
 }
