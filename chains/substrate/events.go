@@ -42,11 +42,14 @@ func fungibleTransferHandler(evtI interface{}, messageContext core.MessageContex
 
 	equilibrium.EventFungibleTransfer("EventFound", fmt.Sprintf("(S->E) Handle FungibleTransferEvent"), evt, messageContext)
 
+	factor := big.NewInt(1000000000)
+	amount := new(big.Int).Mul(evt.Amount.Int, factor)
+
 	return msg.NewFungibleTransfer(
 		0, // Unset
 		msg.ChainId(evt.Destination),
 		msg.Nonce(evt.DepositNonce),
-		evt.Amount.Int,
+		amount,
 		resourceId,
 		evt.Recipient,
 	), messageContext, nil

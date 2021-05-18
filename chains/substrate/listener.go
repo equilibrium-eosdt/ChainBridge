@@ -214,10 +214,7 @@ func (l *listener) handleEvents(evts utils.Events, blockHash types.Hash) {
 	if l.subscriptions[FungibleTransfer] != nil {
 		for _, evt := range evts.ChainBridge_FungibleTransfer {
 			l.log.Trace("Handling FungibleTransfer event")
-			factor := big.NewInt(1000000000)
-			amount := new(big.Int).Mul(evt.Amount.Int, factor)
-			evt.Amount = types.NewU256(*amount)
-			
+
 			messageContext := core.MessageContext{
 				"substrate_block_hash": blockHash.Hex(),
 				"substrate_extrinsic_index": strconv.FormatUint(uint64(evt.Phase.AsApplyExtrinsic), 10),
