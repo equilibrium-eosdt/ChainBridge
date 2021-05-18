@@ -39,20 +39,6 @@ func CreateGrayLogger(addr, environment string) error {
 	return nil
 }
 
-// type Message struct {
-//  	Source       ChainId      // Source where message was initiated
-//  	Destination  ChainId      // Destination chain of message
-//  	Type         TransferType // type of bridge transfer
-//  	DepositNonce Nonce        // Nonce for the deposit
-//      ResourceId   ResourceId
-//      Payload      []interface{} // data associated with event sequence
-// }
-//
-// type Transaction struct {
-//      func Hash() common.Hash
-//      func Value() *big.Int
-//      func To() *common.Address
-// }
 func Message(action, text string, m msg.Message, tx *types.Transaction, data []byte, messageContext core.MessageContext) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
@@ -89,13 +75,6 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 	}
 
 	if tx != nil {
-		// js, err := tx.MarshalJSON()
-		// if err != nil {
-		// 	ctx = append(ctx, "tx_json", err.Error())
-		// } else {
-		// 	ctx = append(ctx, "tx_json", string(js))
-		// }
-
 		ctx = append(ctx, "tx_hash", tx.Hash().Hex())
 	}
 
@@ -115,13 +94,6 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 	Info(text, ctx...)
 }
 
-// type EventFungibleTransfer struct {
-//  	Destination  types.U8
-//  	DepositNonce types.U64
-//      ResourceId   types.Bytes32
-//  	Amount       types.U256
-//  	Recipient    types.Bytes
-// }
 func EventFungibleTransfer(action, text string, e events.EventFungibleTransfer, messageContext core.MessageContext) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
