@@ -6,23 +6,23 @@ import (
 )
 
 type EventLockdropUnlock struct {
-	Phase      types.Phase
-	Who		   types.AccountID
-	Amount	   Balance
-	Topics     []types.Hash
+	Phase  types.Phase
+	Who    types.AccountID
+	Amount Balance
+	Topics []types.Hash
 }
 
 type EventLockdropLock struct {
-	Phase      types.Phase
-	Who		   types.AccountID
-	Amount	   Balance
-	Topics     []types.Hash
+	Phase  types.Phase
+	Who    types.AccountID
+	Amount Balance
+	Topics []types.Hash
 }
 
 type EventBailsmanUnregisteredBailsman struct {
-	Phase      types.Phase
-	Who		   types.AccountID
-	Topics     []types.Hash
+	Phase  types.Phase
+	Who    types.AccountID
+	Topics []types.Hash
 }
 
 // EventBalancesTransfer is emitted when a Substrate client calls Currency::transfer.
@@ -126,4 +126,13 @@ type EventPortfolioMetricsRecalculated struct {
 	Phase     types.Phase
 	AccountId types.AccountID
 	Topics    []types.Hash
+}
+
+type EventMaintenanceMarginCall struct {
+	AccountId types.AccountID
+	Timestamp types.U64
+}
+
+type EventMarginCallExecuted struct {
+	AccountId types.AccountID
 }
