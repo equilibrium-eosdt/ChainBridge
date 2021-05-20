@@ -132,9 +132,11 @@ type EventMaintenanceMarginCall struct {
 	Phase     types.Phase
 	AccountId types.AccountID
 	Timestamp types.U64
+	Topics    []types.Hash
 }
 
 type EventMarginCallExecuted struct {
 	Phase     types.Phase
 	AccountId types.AccountID
+	Topics    []types.Hash
 }
