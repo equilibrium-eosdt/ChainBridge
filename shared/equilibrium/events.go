@@ -129,10 +129,12 @@ type EventPortfolioMetricsRecalculated struct {
 }
 
 type EventMaintenanceMarginCall struct {
+	Phase     types.Phase
 	AccountId types.AccountID
 	Timestamp types.U64
 }
 
 type EventMarginCallExecuted struct {
+	Phase     types.Phase
 	AccountId types.AccountID
 }
