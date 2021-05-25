@@ -15,9 +15,6 @@ type AccountInfo struct {
 	Refcount types.U32
 }
 
-/// Defines the currency of a transfer.
-type Currency byte
-
 /// Represents balance value.
 type Balance types.U64
 
@@ -27,5 +24,5 @@ type Reason byte
 /// Describes type of a subaccount.
 type SubAccType byte
 
-/// Represents asset type from the Financial Pallet.
+/// Represents asset type.
 type AssetType types.U64

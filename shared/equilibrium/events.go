@@ -30,7 +30,7 @@ type EventBalancesTransfer struct {
 	Phase    types.Phase
 	From     types.AccountID
 	To       types.AccountID
-	Currency Currency
+	Asset AssetType
 	Value    Balance
 	Reason   Reason
 	Topics   []types.Hash
@@ -44,7 +44,7 @@ type EventBalancesDeleteAccount struct {
 
 type EventOracleNewPrice struct {
 	Phase     types.Phase
-	Currency  Currency
+	Asset  AssetType
 	MedPrice  Balance
 	NewPrice  Balance
 	AccountId types.AccountID
