@@ -28,4 +28,4 @@ type Reason byte
 type SubAccType byte
 
 /// Represents asset type from the Financial Pallet.
-type AssetType byte
+type AssetType types.U64
