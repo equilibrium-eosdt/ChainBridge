@@ -88,6 +88,7 @@ func (w *writer) createFungibleProposal(m msg.Message) (*proposal, error) {
 
 	amount := bigAmt.Uint64()
 	recipient := types.NewAccountID(m.Payload[1].([]byte))
+
 	depositNonce := types.U64(m.DepositNonce)
 
 	meta := w.conn.getMetadata()
@@ -101,6 +102,7 @@ func (w *writer) createFungibleProposal(m msg.Message) (*proposal, error) {
 		method,
 		recipient,
 		amount,
+		types.NewBytes32(m.ResourceId)
 	)
 	if err != nil {
 		return nil, err
