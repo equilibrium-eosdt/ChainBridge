@@ -70,6 +70,20 @@ type Chain struct {
 	stop     chan<- int
 }
 
+func isHttp(endpoint string) (bool, error) {
+	if len(endpoint) == 0 {
+		return false, fmt.Errorf("endpoint string is empty")
+	}
+
+	firstLetter := endpoint[0]
+
+	if firstLetter != 'h' && firstLetter != 'w' {
+		return false, fmt.Errorf("unknown protocol: %s", endpoint)
+	}
+
+	return firstLetter == 'h', nil
+}
+
 func InitializeChain(chainCfg *core.ChainConfig, logger log15.Logger, sysErr chan<- error, m *metrics.ChainMetrics) (*Chain, error) {
 	cfg, err := parseChainConfig(chainCfg)
 	if err != nil {
@@ -88,7 +102,13 @@ func InitializeChain(chainCfg *core.ChainConfig, logger log15.Logger, sysErr cha
 	}
 
 	stop := make(chan int)
-	conn := connection.NewConnection(cfg.endpoint, cfg.http, kp, logger, cfg.gasLimit, cfg.maxGasPrice)
+
+	http, err := isHttp(cfg.endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	conn := connection.NewConnection(cfg.endpoint, http, kp, logger, cfg.gasLimit, cfg.maxGasPrice)
 	err = conn.Connect()
 	if err != nil {
 		return nil, err
