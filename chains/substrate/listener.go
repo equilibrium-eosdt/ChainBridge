@@ -6,6 +6,7 @@ package substrate
 import (
 	"errors"
 	"fmt"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"math/big"
 	"strconv"
@@ -29,7 +30,7 @@ type listener struct {
 	conn          *Connection
 	subscriptions map[eventName]eventHandler // Handlers for specific events
 	router        chains.Router
-	log           log15.Logger
+	log           equilibrium.TransferLogger
 	stop          <-chan int
 	sysErr        chan<- error
 	latestBlock   metrics.LatestBlock
@@ -40,7 +41,7 @@ type listener struct {
 var BlockRetryInterval = time.Second * 5
 var BlockRetryLimit = 5
 
-func NewListener(conn *Connection, name string, id msg.ChainId, startBlock uint64, log log15.Logger, bs blockstore.Blockstorer, stop <-chan int, sysErr chan<- error, m *metrics.ChainMetrics) *listener {
+func NewListener(conn *Connection, name string, id msg.ChainId, startBlock uint64, log equilibrium.TransferLogger, bs blockstore.Blockstorer, stop <-chan int, sysErr chan<- error, m *metrics.ChainMetrics) *listener {
 	return &listener{
 		name:          name,
 		chainId:       id,

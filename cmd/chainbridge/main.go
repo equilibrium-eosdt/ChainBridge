@@ -197,7 +197,7 @@ func run(ctx *cli.Context) error {
 		var newChain core.Chain
 		var m *metrics.ChainMetrics
 
-		logger := log.Root().New("chain", chainConfig.Name)
+		logger := equilibrium.NewTransferLogger(log.Root().New("chain", chainConfig.Name))
 
 		if ctx.Bool(config.MetricsFlag.Name) {
 			m = metrics.NewChainMetrics(chain.Name)

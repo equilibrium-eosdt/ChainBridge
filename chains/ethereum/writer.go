@@ -4,13 +4,12 @@
 package ethereum
 
 import (
+	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
+	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	"github.com/ChainSafe/chainbridge-utils/core"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
-	"github.com/ChainSafe/log15"
-
-	"github.com/ChainSafe/ChainBridge/bindings/Bridge"
-	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
 )
 
 var _ core.Writer = &writer{}
@@ -25,14 +24,14 @@ type writer struct {
 	conn           Connection
 	bridgeContract *Bridge.Bridge // instance of bound receiver bridgeContract
 	erc20HandlerContract   *ERC20Handler.ERC20Handler
-	log            log15.Logger
+	log            equilibrium.TransferLogger
 	stop           <-chan int
 	sysErr         chan<- error // Reports fatal error to core
 	metrics        *metrics.ChainMetrics
 }
 
 // NewWriter creates and returns writer
-func NewWriter(conn Connection, cfg *Config, log log15.Logger, stop <-chan int, sysErr chan<- error, m *metrics.ChainMetrics) *writer {
+func NewWriter(conn Connection, cfg *Config, log equilibrium.TransferLogger, stop <-chan int, sysErr chan<- error, m *metrics.ChainMetrics) *writer {
 	return &writer{
 		cfg:     *cfg,
 		conn:    conn,

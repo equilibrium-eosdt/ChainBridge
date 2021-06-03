@@ -24,14 +24,13 @@ As the writer receives messages from the router, it constructs proposals. If a p
 package substrate
 
 import (
+	"github.com/ChainSafe/ChainBridge/config"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/crypto/sr25519"
 	"github.com/ChainSafe/chainbridge-utils/keystore"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
-	"github.com/ChainSafe/log15"
-
-	"github.com/ChainSafe/ChainBridge/config"
 )
 
 var _ core.Chain = &Chain{}
@@ -44,7 +43,7 @@ type Chain struct {
 	stop     chan<- int
 }
 
-func InitializeChain(cfg *core.ChainConfig, logger log15.Logger, sysErr chan<- error, m *metrics.ChainMetrics) (*Chain, error) {
+func InitializeChain(cfg *core.ChainConfig, logger equilibrium.TransferLogger, sysErr chan<- error, m *metrics.ChainMetrics) (*Chain, error) {
 	kp, err := keystore.KeypairFromAddress(cfg.From, keystore.SubChain, cfg.KeystorePath, cfg.Insecure)
 	if err != nil {
 		return nil, err

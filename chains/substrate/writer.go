@@ -12,7 +12,6 @@ import (
 	"github.com/ChainSafe/chainbridge-utils/core"
 	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
-	"github.com/ChainSafe/log15"
 	"github.com/centrifuge/go-substrate-rpc-client/types"
 
 	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
@@ -26,12 +25,12 @@ var TerminatedError = errors.New("terminated")
 
 type writer struct {
 	conn    *Connection
-	log     log15.Logger
+	log     equilibrium.TransferLogger
 	sysErr  chan<- error
 	metrics *metrics.ChainMetrics
 }
 
-func NewWriter(conn *Connection, log log15.Logger, sysErr chan<- error, m *metrics.ChainMetrics) *writer {
+func NewWriter(conn *Connection, log equilibrium.TransferLogger, sysErr chan<- error, m *metrics.ChainMetrics) *writer {
 	return &writer{
 		conn:    conn,
 		log:     log,
