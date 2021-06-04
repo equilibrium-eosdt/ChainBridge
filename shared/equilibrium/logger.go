@@ -51,7 +51,6 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 	ctx = append(ctx, "nonce", m.DepositNonce)
 	ctx = append(ctx, "type", m.Type)
 	ctx = append(ctx, "resource_id", hex.EncodeToString(m.ResourceId[:]))
-	ctx = append(ctx, "service", "bridge")
 
 	if m.Type == msg.FungibleTransfer {
 		if len(m.Payload) > 0 {
@@ -99,6 +98,7 @@ func writeToGelf(text string, messageContext core.MessageContext, logLevel int32
 	for name, value := range messageContext {
 		ctx = append(ctx, name, value)
 	}
+	ctx = append(ctx, "service", "bridge")
 
 	message := newMessage(text, ctx...)
 	message.Level = logLevel
