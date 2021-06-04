@@ -35,30 +35,30 @@ var ErrFatalTx = errors.New("submission of transaction failed")
 var ErrFatalQuery = errors.New("query of chain state failed")
 
 // proposalIsComplete returns true if the proposal state is either Passed, Transferred or Cancelled
-func (w *writer) proposalIsComplete(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte) bool {
+func (w *writer) proposalIsComplete(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte, messageContext core.MessageContext) bool {
 	prop, err := w.bridgeContract.GetProposal(w.conn.CallOpts(), uint8(srcId), uint64(nonce), dataHash)
 	if err != nil {
-		w.log.Error("Failed to check proposal existence", "err", err)
+		w.log.ErrorTransfer("Failed to check proposal existence", messageContext, "err", err)
 		return false
 	}
 	return prop.Status == PassedStatus || prop.Status == TransferredStatus || prop.Status == CancelledStatus
 }
 
 // proposalIsComplete returns true if the proposal state is Transferred or Cancelled
-func (w *writer) proposalIsFinalized(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte) bool {
+func (w *writer) proposalIsFinalized(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte, messageContext core.MessageContext) bool {
 	prop, err := w.bridgeContract.GetProposal(w.conn.CallOpts(), uint8(srcId), uint64(nonce), dataHash)
 	if err != nil {
-		w.log.Error("Failed to check proposal existence", "err", err)
+		w.log.ErrorTransfer("Failed to check proposal existence", messageContext, "err", err)
 		return false
 	}
 	return prop.Status == TransferredStatus || prop.Status == CancelledStatus // Transferred (3)
 }
 
 // hasVoted checks if this relayer has already voted
-func (w *writer) hasVoted(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte) bool {
+func (w *writer) hasVoted(srcId msg.ChainId, nonce msg.Nonce, dataHash [32]byte, messageContext core.MessageContext) bool {
 	hasVoted, err := w.bridgeContract.HasVotedOnProposal(w.conn.CallOpts(), utils.IDAndNonce(srcId, nonce), dataHash, w.conn.Opts().From)
 	if err != nil {
-		w.log.Error("Failed to check proposal existence", "err", err)
+		w.log.ErrorTransfer("Failed to check proposal existence", messageContext, "err", err)
 		return false
 	}
 
@@ -70,7 +70,7 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte, messageContext cor
 	action := "Info"
 
 	// Check if proposal has passed and skip if Passed or Transferred
-	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
+	if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash, messageContext) {
 		w.log.Info("Proposal complete, not voting", "src", m.Source, "nonce", m.DepositNonce)
 		equilibrium.Message(action, fmt.Sprintf("(%s) Proposal complete, not voting", direction),
 			m, nil, dataHash[:], messageContext)
@@ -78,7 +78,7 @@ func (w *writer) shouldVote(m msg.Message, dataHash [32]byte, messageContext cor
 	}
 
 	// Check if relayer has previously voted
-	if w.hasVoted(m.Source, m.DepositNonce, dataHash) {
+	if w.hasVoted(m.Source, m.DepositNonce, dataHash, messageContext) {
 		w.log.Info("Relayer has already voted, not voting", "src", m.Source, "nonce", m.DepositNonce)
 		equilibrium.Message(action, fmt.Sprintf("(%s) Relayer has already voted, not voting", direction),
 			m, nil, dataHash[:], messageContext)
@@ -97,19 +97,19 @@ func (w *writer) createErc20Proposal(m msg.Message, messageContext core.MessageC
 
 	tokenAddress, err := w.erc20HandlerContract.ResourceIDToTokenContractAddress(&bind.CallOpts{From: w.conn.Keypair().CommonAddress()}, resourceId)
 	if err != nil {
-		w.log.Error("Unable to get contract address by resourceId", "err", err)
+		w.log.ErrorTransfer("Unable to get contract address by resourceId", messageContext, "err", err)
 		return false
 	}
 
 	erc20Contract, err := erc20.NewERC20(tokenAddress, w.conn.Client())
 	if err != nil {
-		w.log.Error("Error Creating ERC20 Contract From TokenAddress", "err", err)
+		w.log.ErrorTransfer("Error Creating ERC20 Contract From TokenAddress", messageContext, "err", err)
 		return false
 	}
 
 	tokenDecimals, err := erc20Contract.Decimals(&bind.CallOpts{From: w.conn.Keypair().CommonAddress()})
 	if err != nil {
-		w.log.Error("Error Getting Token Decimals")
+		w.log.ErrorTransfer("Error Getting Token Decimals", messageContext)
 		return false
 	}
 
@@ -133,7 +133,7 @@ func (w *writer) createErc20Proposal(m msg.Message, messageContext core.MessageC
 	// Capture latest block so when know where to watch from
 	latestBlock, err := w.conn.LatestBlock()
 	if err != nil {
-		w.log.Error("Unable to fetch latest block", "err", err)
+		w.log.ErrorTransfer("Unable to fetch latest block", messageContext, "err", err)
 		return false
 	}
 
@@ -215,10 +215,10 @@ func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte,
 			for waitRetrys := 0; waitRetrys < BlockRetryLimit; waitRetrys++ {
 				err := w.conn.WaitForBlock(latestBlock)
 				if err != nil {
-					w.log.Error("Waiting for block failed", "err", err)
+					w.log.ErrorTransfer("Waiting for block failed", messageContext, "err", err)
 					// Exit if retries exceeded
 					if waitRetrys+1 == BlockRetryLimit {
-						w.log.Error("Waiting for block retries exceeded, shutting down")
+						w.log.ErrorTransfer("Waiting for block retries exceeded, shutting down", messageContext)
 						w.sysErr <- ErrFatalQuery
 						return
 					}
@@ -231,7 +231,7 @@ func (w *writer) watchThenExecute(m msg.Message, data []byte, dataHash [32]byte,
 			query := buildQuery(w.cfg.bridgeContract, utils.ProposalEvent, latestBlock, latestBlock)
 			evts, err := w.conn.Client().FilterLogs(context.Background(), query)
 			if err != nil {
-				w.log.Error("Failed to fetch logs", "err", err)
+				w.log.ErrorTransfer("Failed to fetch logs", messageContext, "err", err)
 				return
 			}
 
@@ -268,7 +268,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte, messageContext c
 		default:
 			err := w.conn.LockAndUpdateOpts()
 			if err != nil {
-				w.log.Error("Failed to update tx opts", "err", err)
+				w.log.ErrorTransfer("Failed to update tx opts", messageContext, "err", err)
 				continue
 			}
 
@@ -298,7 +298,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte, messageContext c
 			}
 
 			// Verify proposal is still open for voting, otherwise no need to retry
-			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash) {
+			if w.proposalIsComplete(m.Source, m.DepositNonce, dataHash, messageContext) {
 				w.log.Info("Proposal voting complete on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal voting complete on chain", direction),
 					m, tx, dataHash[:], messageContext)
@@ -306,7 +306,7 @@ func (w *writer) voteProposal(m msg.Message, dataHash [32]byte, messageContext c
 			}
 		}
 	}
-	w.log.Error("Submission of Vote transaction failed", "source", m.Source, "dest", m.Destination, "depositNonce", m.DepositNonce)
+	w.log.ErrorTransfer("Submission of Vote transaction failed", messageContext, "source", m.Source, "dest", m.Destination, "depositNonce", m.DepositNonce)
 	w.sysErr <- ErrFatalTx
 }
 
@@ -320,7 +320,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte, 
 		default:
 			err := w.conn.LockAndUpdateOpts()
 			if err != nil {
-				w.log.Error("Failed to update nonce", "err", err)
+				w.log.ErrorTransfer("Failed to update nonce", messageContext, "err", err)
 				return
 			}
 
@@ -339,7 +339,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte, 
 					m, tx, dataHash[:], messageContext)
 				return
 			} else if err.Error() == ErrNonceTooLow.Error() || err.Error() == ErrTxUnderpriced.Error() {
-				w.log.Error("Nonce too low, will retry")
+				w.log.ErrorTransfer("Nonce too low, will retry", messageContext)
 				time.Sleep(TxRetryInterval)
 			} else {
 				w.log.Warn("Execution failed, proposal may already be complete", "err", err)
@@ -348,7 +348,7 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte, 
 
 			// Verify proposal is still open for execution, tx will fail if we aren't the first to execute,
 			// but there is no need to retry
-			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash) {
+			if w.proposalIsFinalized(m.Source, m.DepositNonce, dataHash, messageContext) {
 				w.log.Info("Proposal finalized on chain", "src", m.Source, "dst", m.Destination, "nonce", m.DepositNonce)
 				equilibrium.Message("Info", fmt.Sprintf("(%s) Proposal finalized on chain", direction),
 					m, tx, dataHash[:], messageContext)
@@ -356,6 +356,6 @@ func (w *writer) executeProposal(m msg.Message, data []byte, dataHash [32]byte, 
 			}
 		}
 	}
-	w.log.Error("Submission of Execute transaction failed", "source", m.Source, "dest", m.Destination, "depositNonce", m.DepositNonce)
+	w.log.ErrorTransfer("Submission of Execute transaction failed", messageContext, "source", m.Source, "dest", m.Destination, "depositNonce", m.DepositNonce)
 	w.sysErr <- ErrFatalTx
 }

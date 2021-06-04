@@ -76,8 +76,7 @@ func (w *writer) ResolveMessage(m msg.Message, context core.MessageContext) bool
 		// Ensure we only submit a vote if the proposal hasn't completed
 		valid, reason, err := w.proposalValid(prop)
 		if err != nil {
-			w.log.Error("Failed to assert proposal state", "err", err)
-			equilibrium.Error("Failed to assert proposal state", err)
+			w.log.ErrorTransfer("Failed to assert proposal state", context, "err", err)
 			time.Sleep(BlockRetryInterval)
 			continue
 		}
@@ -91,8 +90,7 @@ func (w *writer) ResolveMessage(m msg.Message, context core.MessageContext) bool
 			if err != nil && err.Error() == TerminatedError.Error() {
 				return false
 			} else if err != nil {
-				w.log.Error("Failed to execute extrinsic", "err", err)
-				equilibrium.Error("Failed to execute extrinsic", err)
+				w.log.ErrorTransfer("Failed to execute extrinsic", context, "err", err)
 				time.Sleep(BlockRetryInterval)
 				continue
 			}

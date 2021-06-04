@@ -21,25 +21,25 @@ func (l *listener) handleErc20DepositedEvent(destId msg.ChainId, nonce msg.Nonce
 
 	record, err := l.erc20HandlerContract.GetDepositRecord(&bind.CallOpts{From: l.conn.Keypair().CommonAddress()}, uint64(nonce), uint8(destId))
 	if err != nil {
-		l.log.Error("Error Unpacking ERC20 Deposit Record", "err", err)
+		l.log.ErrorTransfer("Error Unpacking ERC20 Deposit Record", messageContext, "err", err)
 		return msg.Message{}, err
 	}
 
 	tokenAddress := record.TokenAddress
 	erc20Contract, err := erc20.NewERC20(tokenAddress, l.conn.Client())
 	if err != nil {
-		l.log.Error("Error Creating ERC20 Contract From TokenAddress", "err", err)
+		l.log.ErrorTransfer("Error Creating ERC20 Contract From TokenAddress", messageContext, "err", err)
 		return msg.Message{}, err
 	}
 
 	tokenDecimals, err := erc20Contract.Decimals(&bind.CallOpts{From: l.conn.Keypair().CommonAddress()})
 	if err != nil {
-		l.log.Error("Error Getting Token Decimals")
+		l.log.ErrorTransfer("Error Getting Token Decimals", messageContext)
 		return msg.Message{}, err
 	}
 
 	if tokenDecimals > 36 {
-		l.log.Error("Token Has Very Strange Decimals Count")
+		l.log.ErrorTransfer("Token Has Very Strange Decimals Count", messageContext)
 		return msg.Message{}, errors.New("token has very strange decimals count")
 	}
 

@@ -195,7 +195,7 @@ func (l *listener) getDepositEventsForBlock(latestBlock *big.Int) error {
 		} else if addr == l.cfg.genericHandlerContract {
 			m, err = l.handleGenericDepositedEvent(destId, nonce)
 		} else {
-			l.log.Error("event has unrecognized handler", "handler", addr.Hex())
+			l.log.ErrorTransfer("event has unrecognized handler", messageContext, "handler", addr.Hex())
 			return nil
 		}
 
@@ -205,7 +205,7 @@ func (l *listener) getDepositEventsForBlock(latestBlock *big.Int) error {
 
 		err = l.router.Send(m, messageContext)
 		if err != nil {
-			l.log.Error("subscription error: failed to route message", "err", err)
+			l.log.ErrorTransfer("subscription error: failed to route message", messageContext, "err", err)
 		}
 	}
 

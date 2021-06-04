@@ -87,20 +87,21 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 		}
 	}
 
-	for name, value := range messageContext {
-		ctx = append(ctx, name, value)
-	}
-
-	info(text, ctx...)
+	info(text, messageContext, ctx...)
 }
 
-func info(text string, ctx ...interface{}) {
+func writeToGelf(text string, messageContext core.MessageContext, logLevel int32, ctx ...interface{}) {
 	if logger == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
 		return
 	}
+
+	for name, value := range messageContext {
+		ctx = append(ctx, name, value)
+	}
+
 	message := newMessage(text, ctx...)
-	message.Level = gelf.LOG_INFO
+	message.Level = logLevel
 	_, _ = fmt.Fprintf(os.Stdout, "==== Graylog: %v\n", message)
 	err := logger.gelf.WriteMessage(message)
 	if err != nil {
@@ -108,17 +109,16 @@ func info(text string, ctx ...interface{}) {
 	}
 }
 
-func Error(text string, err error, ctx ...interface{}) {
-	if logger == nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Graylog writing is disabled")
-		return
-	}
-	message := newMessage(text+": "+err.Error(), ctx...)
-	message.Level = gelf.LOG_ERR
-	err = logger.gelf.WriteMessage(message)
-	if err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "WriteMessage error: %s\n", err.Error())
-	}
+func info(text string, messageContext core.MessageContext, ctx ...interface{}) {
+	writeToGelf(text, messageContext, gelf.LOG_INFO, ctx...)
+}
+
+func Error(text string, messageContext core.MessageContext, ctx ...interface{}) {
+	writeToGelf(text, messageContext, gelf.LOG_ERR, ctx...)
+}
+
+func Crit(text string, messageContext core.MessageContext, ctx ...interface{}) {
+	writeToGelf(text, messageContext, gelf.LOG_CRIT, ctx...)
 }
 
 func newMessage(text string, ctx ...interface{}) *gelf.Message {

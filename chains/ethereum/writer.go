@@ -65,7 +65,7 @@ func (w *writer) ResolveMessage(m msg.Message, context core.MessageContext) bool
 	case msg.GenericTransfer:
 		return w.createGenericDepositProposal(m)
 	default:
-		w.log.Error("Unknown message type received", "type", m.Type)
+		w.log.ErrorTransfer("Unknown message type received", context, "type", m.Type)
 		return false
 	}
 }
