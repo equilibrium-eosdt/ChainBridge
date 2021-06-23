@@ -144,11 +144,11 @@ type EventMarginCallExecuted struct {
 type EventNewAsset struct {
 	Phase types.Phase
 	Asset types.U64
-	AssetName []types.U8
+	AssetName []types.Hash
 }
 
 type EventDeleteAsset struct {
 	Phase types.Phase
 	Asset types.U64
-	AssetName []types.U8
+	AssetName []types.Hash
 }
