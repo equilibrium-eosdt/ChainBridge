@@ -169,4 +169,6 @@ type Events struct {
 	Financial_PortfolioMetricsRecalculated []equilibrium.EventPortfolioMetricsRecalculated // nolint:stylecheck,golint
 	EqMarginCall_MaintenanceMarginCall     []equilibrium.EventMaintenanceMarginCall        // nolint:stylecheck,golint
 	EqMarginCall_MarginCallExecuted        []equilibrium.EventMarginCallExecuted           // nolint:stylecheck,golint
+	EqAssets_NewAsset                      []equilibrium.EventNewAsset                     // nolint:stylecheck,golint
+	EqAssets_DeleteAsset                   []equilibrium.EventDeleteAsset                  // nolint:stylecheck,golint
 }

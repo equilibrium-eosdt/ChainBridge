@@ -140,3 +140,15 @@ type EventMarginCallExecuted struct {
 	AccountId types.AccountID
 	Topics    []types.Hash
 }
+
+type EventNewAsset struct {
+	Phase types.Phase
+	Asset types.U64
+	AssetName []types.U8
+}
+
+type EventDeleteAsset struct {
+	Phase types.Phase
+	Asset types.U64
+	AssetName []types.U8
+}
