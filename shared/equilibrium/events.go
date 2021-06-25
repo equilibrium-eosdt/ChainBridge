@@ -154,3 +154,58 @@ type EventDeleteAsset struct {
 	AssetName []types.U8
 	Topics    []types.Hash
 }
+
+type EventMultisigSudoInitialized struct {
+	Phase  types.Phase
+	Topics []types.Hash
+}
+
+type EventMultisigSudoKeyAdded struct {
+	Phase  types.Phase
+	AccountId types.AccountID
+	Topics []types.Hash
+}
+
+type EventMultisigSudoKeyRemoved struct {
+	Phase  types.Phase
+	AccountId types.AccountID
+	Topics []types.Hash
+}
+
+type EventMultisigSudoThresholdModified struct {
+	Phase  types.Phase
+	Threshold types.U32
+	Topics []types.Hash
+}
+
+type EventMultisigSudoNewProposal struct {
+	Phase  types.Phase
+	AccountId types.AccountID
+	CallHash [32]types.U8
+	Topics []types.Hash
+}
+
+type EventMultisigSudoProposalCancelled struct {
+	Phase  types.Phase
+	CallHash [32]types.U8
+	Topics []types.Hash
+}
+
+type EventMultisigSudoProposalApproved struct {
+	Phase  types.Phase
+	AccountId types.AccountID
+	CallHash [32]types.U8
+	Topics []types.Hash
+}
+
+type EventMultisigSudoSudid struct {
+	Phase  types.Phase
+	CallHash [32]types.U8
+	Topics []types.Hash
+}
+
+type EventMultisigSudoFailed struct {
+	Phase  types.Phase
+	CallHash [32]types.U8
+	Topics []types.Hash
+}

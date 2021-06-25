@@ -171,4 +171,13 @@ type Events struct {
 	EqMarginCall_MarginCallExecuted        []equilibrium.EventMarginCallExecuted           // nolint:stylecheck,golint
 	EqAssets_NewAsset                      []equilibrium.EventNewAsset                     // nolint:stylecheck,golint
 	EqAssets_DeleteAsset                   []equilibrium.EventDeleteAsset                  // nolint:stylecheck,golint
+	EqMultisigSudo_Initialized             []equilibrium.EventMultisigSudoInitialized      // nolint:stylecheck,golint
+	EqMultisigSudo_KeyAdded                []equilibrium.EventMultisigSudoKeyAdded         // nolint:stylecheck,golint
+	EqMultisigSudo_KeyRemoved              []equilibrium.EventMultisigSudoKeyRemoved       // nolint:stylecheck,golint
+	EqMultisigSudo_ThresholdModified       []equilibrium.EventMultisigSudoThresholdModified// nolint:stylecheck,golint
+	EqMultisigSudo_NewProposal             []equilibrium.EventMultisigSudoNewProposal      // nolint:stylecheck,golint
+	EqMultisigSudo_ProposalCancelled       []equilibrium.EventMultisigSudoProposalCancelled// nolint:stylecheck,golint
+	EqMultisigSudo_ProposalApproved        []equilibrium.EventMultisigSudoProposalApproved // nolint:stylecheck,golint
+	EqMultisigSudo_MultisigSudid           []equilibrium.EventMultisigSudoSudid            // nolint:stylecheck,golint
+	EqMultisigSudo_SudoFailed              []equilibrium.EventMultisigSudoFailed           // nolint:stylecheck,golint
 }
