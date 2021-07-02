@@ -26,3 +26,12 @@ type SubAccType byte
 
 /// Represents asset type.
 type AssetType types.U64
+
+/// Represents Pool Id type.
+type PoolId types.U32
+
+/// Represents Pool Token Index type.
+type PoolTokenIndex types.U32
+
+/// Represents Asset Id Inner type.
+type AssetIdInnerType types.U64

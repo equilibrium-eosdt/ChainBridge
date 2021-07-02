@@ -27,13 +27,13 @@ type EventBailsmanUnregisteredBailsman struct {
 
 // EventBalancesTransfer is emitted when a Substrate client calls Currency::transfer.
 type EventBalancesTransfer struct {
-	Phase    types.Phase
-	From     types.AccountID
-	To       types.AccountID
-	Asset AssetType
-	Value    Balance
-	Reason   Reason
-	Topics   []types.Hash
+	Phase  types.Phase
+	From   types.AccountID
+	To     types.AccountID
+	Asset  AssetType
+	Value  Balance
+	Reason Reason
+	Topics []types.Hash
 }
 
 type EventBalancesDeleteAccount struct {
@@ -44,7 +44,7 @@ type EventBalancesDeleteAccount struct {
 
 type EventOracleNewPrice struct {
 	Phase     types.Phase
-	Asset  AssetType
+	Asset     AssetType
 	MedPrice  Balance
 	NewPrice  Balance
 	AccountId types.AccountID
@@ -142,15 +142,15 @@ type EventMarginCallExecuted struct {
 }
 
 type EventNewAsset struct {
-	Phase types.Phase
-	Asset types.U64
+	Phase     types.Phase
+	Asset     types.U64
 	AssetName []types.U8
 	Topics    []types.Hash
 }
 
 type EventDeleteAsset struct {
-	Phase types.Phase
-	Asset types.U64
+	Phase     types.Phase
+	Asset     types.U64
 	AssetName []types.U8
 	Topics    []types.Hash
 }
@@ -161,51 +161,141 @@ type EventMultisigSudoInitialized struct {
 }
 
 type EventMultisigSudoKeyAdded struct {
-	Phase  types.Phase
+	Phase     types.Phase
 	AccountId types.AccountID
-	Topics []types.Hash
+	Topics    []types.Hash
 }
 
 type EventMultisigSudoKeyRemoved struct {
-	Phase  types.Phase
+	Phase     types.Phase
 	AccountId types.AccountID
-	Topics []types.Hash
+	Topics    []types.Hash
 }
 
 type EventMultisigSudoThresholdModified struct {
-	Phase  types.Phase
+	Phase     types.Phase
 	Threshold types.U32
-	Topics []types.Hash
+	Topics    []types.Hash
 }
 
 type EventMultisigSudoNewProposal struct {
-	Phase  types.Phase
+	Phase     types.Phase
 	AccountId types.AccountID
-	CallHash [32]types.U8
-	Topics []types.Hash
+	CallHash  [32]types.U8
+	Topics    []types.Hash
 }
 
 type EventMultisigSudoProposalCancelled struct {
-	Phase  types.Phase
+	Phase    types.Phase
 	CallHash [32]types.U8
-	Topics []types.Hash
+	Topics   []types.Hash
 }
 
 type EventMultisigSudoProposalApproved struct {
-	Phase  types.Phase
+	Phase     types.Phase
 	AccountId types.AccountID
-	CallHash [32]types.U8
-	Topics []types.Hash
+	CallHash  [32]types.U8
+	Topics    []types.Hash
 }
 
 type EventMultisigSudoSudid struct {
-	Phase  types.Phase
+	Phase    types.Phase
 	CallHash [32]types.U8
-	Topics []types.Hash
+	Topics   []types.Hash
 }
 
 type EventMultisigSudoFailed struct {
-	Phase  types.Phase
+	Phase    types.Phase
 	CallHash [32]types.U8
+	Topics   []types.Hash
+}
+
+type EventBridgeRemark struct {
+	Phase  types.Phase
+	Hash   [32]types.Hash
 	Topics []types.Hash
+}
+
+type EventCurveDistributionCurveAdminFeesDistributed struct {
+	Phase     types.Phase
+	Asset     AssetIdInnerType
+	AssetName []types.U8
+	Amount    Balance
+	Topics    []types.Hash
+}
+
+type EventCurveAmmCreatePool struct {
+	Phase     types.Phase
+	AccountId types.AccountID
+	PoolId    PoolId
+	Topics    []types.Hash
+}
+
+type EventCurveAmmAddLiquidity struct {
+	Phase       types.Phase
+	Provider    types.AccountID
+	PoolId      PoolId
+	TokenAmount []Balance
+	Fees        []Balance
+	Invariant   Balance
+	TokenSupply Balance
+	Topics      []types.Hash
+}
+
+type EventCurveAmmTokenExchange struct {
+	Phase                       types.Phase
+	Provider                    types.AccountID
+	PoolId                      PoolId
+	SendCoinIndex               PoolTokenIndex
+	SendCoinExchangedAmount     Balance
+	ReceivedCoinIndex           PoolTokenIndex
+	ReceivedCoinExchangedAmount Balance
+	Topics                      []types.Hash
+}
+
+type EventCurveAmmRemoveLiquidity struct {
+	Phase        types.Phase
+	Provider     types.AccountID
+	PoolId       PoolId
+	TokenAmounts []Balance
+	Fees         []Balance
+	TokenSupply  Balance
+	Topics       []types.Hash
+}
+
+type EventCurveAmmRemoveLiquidityImbalance struct {
+	Phase        types.Phase
+	Provider     types.AccountID
+	PoolId       PoolId
+	TokenAmounts []Balance
+	Fees         []Balance
+	Invariant    Balance
+	TokenSupply  Balance
+	Topics       []types.Hash
+}
+
+type EventCurveAmmRemoveLiquidityOne struct {
+	Phase               types.Phase
+	Provider            types.AccountID
+	PoolId              PoolId
+	BurnAmount          Balance
+	CoinExchangedAmount Balance
+	NewTokenSupply      Balance
+	Topics              []types.Hash
+}
+
+type EventCurveAmmWithdrawAdminFees struct {
+	Phase     types.Phase
+	Who       types.AccountID
+	PoolId    PoolId
+	AdminFees []Balance
+	Topics    []types.Hash
+}
+
+type EventGensCrowdloanClaim struct {
+	Phase   types.Phase
+	Who     types.AccountID
+	Amount  Balance
+	Penalty Balance
+	Topics  []types.Hash
 }
