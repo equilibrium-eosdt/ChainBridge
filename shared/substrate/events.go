@@ -181,7 +181,7 @@ type Events struct {
 	EqMultisigSudo_MultisigSudid             []equilibrium.EventMultisigSudoSudid                          // nolint:stylecheck,golint
 	EqMultisigSudo_SudoFailed                []equilibrium.EventMultisigSudoFailed                         // nolint:stylecheck,golint
 	EqBridge_Remark                          []equilibrium.EventBridgeRemark                               // nolint:stylecheck,golint
-	CurveDistribution_AdminFeesDistributed []equilibrium.EventCurveDistributionCurveAdminFeesDistributed // nolint:stylecheck,golint
+	CurveDistribution_CurveAdminFeesDistributed []equilibrium.EventCurveDistributionCurveAdminFeesDistributed // nolint:stylecheck,golint
 	CurveAmm_CreatePool                    []equilibrium.EventCurveAmmCreatePool                         // nolint:stylecheck,golint
 	CurveAmm_AddLiquidity                  []equilibrium.EventCurveAmmAddLiquidity                       // nolint:stylecheck,golint
 	CurveAmm_TokenExchange                 []equilibrium.EventCurveAmmTokenExchange                      // nolint:stylecheck,golint
