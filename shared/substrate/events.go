@@ -181,13 +181,13 @@ type Events struct {
 	EqMultisigSudo_MultisigSudid             []equilibrium.EventMultisigSudoSudid                          // nolint:stylecheck,golint
 	EqMultisigSudo_SudoFailed                []equilibrium.EventMultisigSudoFailed                         // nolint:stylecheck,golint
 	EqBridge_Remark                          []equilibrium.EventBridgeRemark                               // nolint:stylecheck,golint
-	EqCurveDistribution_AdminFeesDistributed []equilibrium.EventCurveDistributionCurveAdminFeesDistributed // nolint:stylecheck,golint
-	EqCurveAmm_CreatePool                    []equilibrium.EventCurveAmmCreatePool                         // nolint:stylecheck,golint
-	EqCurveAmm_AddLiquidity                  []equilibrium.EventCurveAmmAddLiquidity                       // nolint:stylecheck,golint
-	EqCurveAmm_TokenExchange                 []equilibrium.EventCurveAmmTokenExchange                      // nolint:stylecheck,golint
-	EqCurveAmm_RemoveLiquidity               []equilibrium.EventCurveAmmRemoveLiquidity                    // nolint:stylecheck,golint
-	EqCurveAmm_RemoveLiquidityImbalance      []equilibrium.EventCurveAmmRemoveLiquidityImbalance           // nolint:stylecheck,golint
-	EqCurveAmm_RemoveLiquidityOne            []equilibrium.EventCurveAmmRemoveLiquidityOne                 // nolint:stylecheck,golint
-	EqCurveAmm_WithdrawAdminFees             []equilibrium.EventCurveAmmWithdrawAdminFees                  // nolint:stylecheck,golint
+	CurveDistribution_AdminFeesDistributed   []equilibrium.EventCurveDistributionCurveAdminFeesDistributed // nolint:stylecheck,golint
+	CurveAmm_CreatePool                      []equilibrium.EventCurveAmmCreatePool                         // nolint:stylecheck,golint
+	CurveAmm_AddLiquidity                    []equilibrium.EventCurveAmmAddLiquidity                       // nolint:stylecheck,golint
+	CurveAmm_TokenExchange                   []equilibrium.EventCurveAmmTokenExchange                      // nolint:stylecheck,golint
+	CurveAmm_RemoveLiquidity                 []equilibrium.EventCurveAmmRemoveLiquidity                    // nolint:stylecheck,golint
+	CurveAmm_RemoveLiquidityImbalance        []equilibrium.EventCurveAmmRemoveLiquidityImbalance           // nolint:stylecheck,golint
+	CurveAmm_RemoveLiquidityOne              []equilibrium.EventCurveAmmRemoveLiquidityOne                 // nolint:stylecheck,golint
+	CurveAmm_WithdrawAdminFees               []equilibrium.EventCurveAmmWithdrawAdminFees                  // nolint:stylecheck,golint
 	GensCrowdloan_Claim                      []equilibrium.EventGensCrowdloanClaim                         // nolint:stylecheck,golint
 }
