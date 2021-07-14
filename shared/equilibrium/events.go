@@ -279,6 +279,7 @@ type EventCurveAmmRemoveLiquidityOne struct {
 	Provider            types.AccountID
 	PoolId              PoolId
 	BurnAmount          Balance
+	BurnedTokenIndex    PoolTokenIndex
 	CoinExchangedAmount Balance
 	NewTokenSupply      Balance
 	Topics              []types.Hash
