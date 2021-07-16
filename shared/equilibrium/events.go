@@ -239,6 +239,7 @@ type EventCurveAmmAddLiquidity struct {
 	Fees        []Balance
 	Invariant   Balance
 	TokenSupply Balance
+	MintedAmount Balance
 	Topics      []types.Hash
 }
 
@@ -250,6 +251,7 @@ type EventCurveAmmTokenExchange struct {
 	SendCoinExchangedAmount     Balance
 	ReceivedCoinIndex           PoolTokenIndex
 	ReceivedCoinExchangedAmount Balance
+	Fee 						Balance
 	Topics                      []types.Hash
 }
 
@@ -271,6 +273,7 @@ type EventCurveAmmRemoveLiquidityImbalance struct {
 	Fees         []Balance
 	Invariant    Balance
 	TokenSupply  Balance
+	BurnAmount   Balance
 	Topics       []types.Hash
 }
 
@@ -282,6 +285,7 @@ type EventCurveAmmRemoveLiquidityOne struct {
 	BurnedTokenIndex    PoolTokenIndex
 	CoinExchangedAmount Balance
 	NewTokenSupply      Balance
+	Fee			        Balance
 	Topics              []types.Hash
 }
 
