@@ -42,6 +42,17 @@ type EventBalancesDeleteAccount struct {
 	Topics  []types.Hash
 }
 
+type EventBalancesExchange struct {
+	Phase    types.Phase
+	Account1 types.AccountID
+	Asset1   AssetType
+	Amount1  Balance
+	Account2 types.AccountID
+	Asset2   AssetType
+	Amount2  Balance
+	Topics   []types.Hash
+}
+
 type EventOracleNewPrice struct {
 	Phase     types.Phase
 	Asset     AssetType
