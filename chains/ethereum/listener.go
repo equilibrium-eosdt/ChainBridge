@@ -108,14 +108,14 @@ func (l *listener) pollBlocks() error {
 
 			// No more retries, goto next block
 			if retry == 0 {
-				l.log.Error("Polling failed, retries exceeded")
+				l.log.Error("Polling failed, retries exceeded", "chain_id", l.cfg.id)
 				l.sysErr <- ErrFatalPolling
 				return nil
 			}
 
 			latestBlock, err := l.conn.LatestBlock()
 			if err != nil {
-				l.log.Error("Unable to get latest block", "block", currentBlock, "err", err)
+				l.log.Error("Unable to get latest block", "block", currentBlock, "err", err, "chain_id", l.cfg.id)
 				retry--
 				time.Sleep(BlockRetryInterval)
 				continue
@@ -127,7 +127,7 @@ func (l *listener) pollBlocks() error {
 
 			// Sleep if the difference is less than BlockDelay; (latest - current) < BlockDelay
 			if big.NewInt(0).Sub(latestBlock, currentBlock).Cmp(BlockDelay) == -1 {
-				l.log.Debug("Block not ready, will retry", "target", currentBlock, "latest", latestBlock)
+				l.log.Debug("Block not ready, will retry", "target", currentBlock, "latest", latestBlock, "chain_id", l.cfg.id)
 				time.Sleep(BlockRetryInterval)
 				continue
 			}
@@ -135,7 +135,7 @@ func (l *listener) pollBlocks() error {
 			// Parse out events
 			err = l.getDepositEventsForBlock(currentBlock)
 			if err != nil {
-				l.log.Error("Failed to get events for block", "block", currentBlock, "err", err)
+				l.log.Error("Failed to get events for block", "block", currentBlock, "err", err, "chain_id", l.cfg.id)
 				retry--
 				continue
 			}
@@ -143,7 +143,7 @@ func (l *listener) pollBlocks() error {
 			// Write to block store. Not a critical operation, no need to retry
 			err = l.blockstore.StoreBlock(currentBlock)
 			if err != nil {
-				l.log.Error("Failed to write latest block to blockstore", "block", currentBlock, "err", err)
+				l.log.Error("Failed to write latest block to blockstore", "block", currentBlock, "err", err, "chain_id", l.cfg.id)
 			}
 
 			if l.metrics != nil {
