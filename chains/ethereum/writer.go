@@ -8,7 +8,7 @@ import (
 	"github.com/ChainSafe/ChainBridge/bindings/ERC20Handler"
 	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
 	"github.com/ChainSafe/chainbridge-utils/core"
-	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 )
 

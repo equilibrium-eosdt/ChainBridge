@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/ChainSafe/chainbridge-utils/core"
-	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/centrifuge/go-substrate-rpc-client/types"
 

@@ -33,11 +33,12 @@ import (
 	"github.com/ChainSafe/ChainBridge/config"
 	"github.com/ChainSafe/ChainBridge/config/mongo"
 	connection "github.com/ChainSafe/ChainBridge/connections/ethereum"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/crypto/secp256k1"
 	"github.com/ChainSafe/chainbridge-utils/keystore"
-	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
+	metricTypes "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -206,7 +207,7 @@ func (c *Chain) Name() string {
 	return c.cfg.Name
 }
 
-func (c *Chain) LatestBlock() metrics.LatestBlock {
+func (c *Chain) LatestBlock() metricTypes.LatestBlock {
 	return c.listener.latestBlock
 }
 

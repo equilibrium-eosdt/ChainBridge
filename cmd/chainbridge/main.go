@@ -16,7 +16,7 @@ import (
 
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/metrics/health"
-	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	log "github.com/ChainSafe/log15"
 	"github.com/prometheus/client_golang/prometheus/promhttp"

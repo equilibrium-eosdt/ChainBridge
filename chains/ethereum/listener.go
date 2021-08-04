@@ -12,8 +12,9 @@ import (
 	"math/big"
 	"time"
 
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
-	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
+	metricTypes "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	eth "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -44,7 +45,7 @@ type listener struct {
 	blockstore             blockstore.Blockstorer
 	stop                   <-chan int
 	sysErr                 chan<- error // Reports fatal error to core
-	latestBlock            metrics.LatestBlock
+	latestBlock            metricTypes.LatestBlock
 	metrics                *metrics.ChainMetrics
 }
 
@@ -57,7 +58,7 @@ func NewListener(conn Connection, cfg *Config, log equilibrium.TransferLogger, b
 		blockstore:  bs,
 		stop:        stop,
 		sysErr:      sysErr,
-		latestBlock: metrics.LatestBlock{LastUpdated: time.Now()},
+		latestBlock: metricTypes.LatestBlock{LastUpdated: time.Now()},
 		metrics:     m,
 	}
 }
@@ -105,7 +106,7 @@ func (l *listener) pollBlocks() error {
 			return errors.New("polling terminated")
 		default:
 
-			var pollingInterval = time.Duration(0)
+			var pollingInterval time.Duration
 			if isSync {
 				pollingInterval = l.cfg.syncPollingInterval
 			} else {
@@ -133,6 +134,7 @@ func (l *listener) pollBlocks() error {
 
 			if l.metrics != nil {
 				l.metrics.LatestKnownBlock.Set(float64(latestBlock.Int64()))
+				l.metrics.LatestBlocksRequested.Inc()
 			}
 
 			// Sleep if the difference is less than BlockDelay; (latest - current) < BlockDelay

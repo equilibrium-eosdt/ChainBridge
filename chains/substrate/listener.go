@@ -13,7 +13,8 @@ import (
 	"time"
 
 	"github.com/ChainSafe/chainbridge-utils/blockstore"
-	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
+	metricTypes "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ChainSafe/log15"
 	"github.com/centrifuge/go-substrate-rpc-client/types"
@@ -33,7 +34,7 @@ type listener struct {
 	log           equilibrium.TransferLogger
 	stop          <-chan int
 	sysErr        chan<- error
-	latestBlock   metrics.LatestBlock
+	latestBlock   metricTypes.LatestBlock
 	metrics       *metrics.ChainMetrics
 }
 
@@ -52,7 +53,7 @@ func NewListener(conn *Connection, name string, id msg.ChainId, startBlock uint6
 		log:           log,
 		stop:          stop,
 		sysErr:        sysErr,
-		latestBlock:   metrics.LatestBlock{LastUpdated: time.Now()},
+		latestBlock:   metricTypes.LatestBlock{LastUpdated: time.Now()},
 		metrics:       m,
 	}
 }

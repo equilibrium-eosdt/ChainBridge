@@ -29,7 +29,8 @@ import (
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/crypto/sr25519"
 	"github.com/ChainSafe/chainbridge-utils/keystore"
-	metrics "github.com/ChainSafe/chainbridge-utils/metrics/types"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
+	metricTypes "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 )
 
@@ -117,7 +118,7 @@ func (c *Chain) SetRouter(r *core.Router) {
 	c.listener.setRouter(r)
 }
 
-func (c *Chain) LatestBlock() metrics.LatestBlock {
+func (c *Chain) LatestBlock() metricTypes.LatestBlock {
 	return c.listener.latestBlock
 }
 
