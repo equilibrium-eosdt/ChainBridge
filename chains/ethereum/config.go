@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"strconv"
+	"time"
 
 	utils "github.com/ChainSafe/ChainBridge/shared/ethereum"
 	"github.com/ChainSafe/chainbridge-utils/core"
@@ -34,6 +36,8 @@ type Config struct {
 	maxGasPrice            *big.Int
 	http                   bool // Config for type of connection
 	startBlock             *big.Int
+	pollingInterval		   time.Duration
+	syncPollingInterval    time.Duration
 }
 
 // parseChainConfig uses a core.ChainConfig to construct a corresponding Config
@@ -55,6 +59,8 @@ func parseChainConfig(chainCfg *core.ChainConfig) (*Config, error) {
 		maxGasPrice:            big.NewInt(DefaultGasPrice),
 		http:                   false,
 		startBlock:             big.NewInt(0),
+		pollingInterval:        time.Millisecond * 2000,
+		syncPollingInterval:    time.Millisecond * 1000,
 	}
 
 	if contract, ok := chainCfg.Opts["bridge"]; ok && contract != "" {
@@ -111,6 +117,26 @@ func parseChainConfig(chainCfg *core.ChainConfig) (*Config, error) {
 			delete(chainCfg.Opts, "startBlock")
 		} else {
 			return nil, errors.New("unable to parse start block")
+		}
+	}
+
+	if pollingInterval, ok := chainCfg.Opts["pollingInterval"]; ok && pollingInterval != "" {
+		interval, err := strconv.ParseInt(pollingInterval, 10, 64)
+		if err == nil {
+			config.pollingInterval = time.Millisecond * time.Duration(interval)
+			delete(chainCfg.Opts, "pollingInterval")
+		} else {
+			return nil, errors.New("unable to parse polling interval")
+		}
+	}
+
+	if syncPollingInterval, ok := chainCfg.Opts["syncPollingInterval"]; ok && syncPollingInterval != "" {
+		interval, err := strconv.ParseInt(syncPollingInterval, 10, 64)
+		if err == nil {
+			config.syncPollingInterval = time.Millisecond * time.Duration(interval)
+			delete(chainCfg.Opts, "syncPollingInterval")
+		} else {
+			return nil, errors.New("unable to parse sync polling interval")
 		}
 	}
 

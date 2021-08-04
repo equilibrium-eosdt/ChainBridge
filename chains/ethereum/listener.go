@@ -32,8 +32,6 @@ var BlockRetryInterval = time.Second * 5
 var BlockRetryLimit = 5
 var ErrFatalPolling = errors.New("listener block polling failed")
 
-var PollingInterval = time.Second * 2
-
 type listener struct {
 	cfg                    Config
 	conn                   Connection
@@ -95,16 +93,28 @@ func (l *listener) start() error {
 // Polling begins at the block defined in `l.cfg.startBlock`. Failed attempts to fetch the latest block or parse
 // a block will be retried up to BlockRetryLimit times before continuing to the next block.
 func (l *listener) pollBlocks() error {
-	l.log.Info("Polling Blocks...")
+	l.log.Info(fmt.Sprintf("Polling Blocks for %s with interval %d and sync interval %d...", l.cfg.name, l.cfg.pollingInterval, l.cfg.syncPollingInterval))
 
 	var currentBlock = l.cfg.startBlock
 	var retry = BlockRetryLimit
+	var isSync = true
+
 	for {
 		select {
 		case <-l.stop:
 			return errors.New("polling terminated")
 		default:
-			time.Sleep(PollingInterval)
+
+			var pollingInterval = time.Duration(0)
+			if isSync {
+				pollingInterval = l.cfg.syncPollingInterval
+			} else {
+				pollingInterval = l.cfg.pollingInterval
+			}
+
+			if pollingInterval != 0 {
+				time.Sleep(l.cfg.pollingInterval)
+			}
 
 			// No more retries, goto next block
 			if retry == 0 {
@@ -129,6 +139,10 @@ func (l *listener) pollBlocks() error {
 			if big.NewInt(0).Sub(latestBlock, currentBlock).Cmp(BlockDelay) == -1 {
 				l.log.Debug("Block not ready, will retry", "target", currentBlock, "latest", latestBlock, "chain_id", l.cfg.id)
 				time.Sleep(BlockRetryInterval)
+				if isSync {
+					l.log.Info("Sync ended")
+				}
+				isSync = false
 				continue
 			}
 
