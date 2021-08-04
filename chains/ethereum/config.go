@@ -60,7 +60,7 @@ func parseChainConfig(chainCfg *core.ChainConfig) (*Config, error) {
 		http:                   false,
 		startBlock:             big.NewInt(0),
 		pollingInterval:        time.Millisecond * 2000,
-		syncPollingInterval:    time.Millisecond * 1000,
+		syncPollingInterval:    time.Millisecond * 500,
 	}
 
 	if contract, ok := chainCfg.Opts["bridge"]; ok && contract != "" {
