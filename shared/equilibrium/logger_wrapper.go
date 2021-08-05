@@ -33,10 +33,12 @@ func (l *loggerGelfWrapper) Debug(msg string, ctx ...interface{}) {
 
 func (l *loggerGelfWrapper) Info(msg string, ctx ...interface{}) {
 	l.inner.Info(msg, ctx...)
+	Info(msg, make(core.MessageContext), ctx...)
 }
 
 func (l *loggerGelfWrapper) Warn(msg string, ctx ...interface{}) {
 	l.inner.Warn(msg, ctx...)
+	Warn(msg, make(core.MessageContext), ctx...)
 }
 
 func (l *loggerGelfWrapper) Error(msg string, ctx ...interface{}) {

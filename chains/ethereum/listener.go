@@ -142,7 +142,7 @@ func (l *listener) pollBlocks() error {
 				l.log.Debug("Block not ready, will retry", "target", currentBlock, "latest", latestBlock, "chain_id", l.cfg.id)
 				time.Sleep(BlockRetryInterval)
 				if isSync {
-					l.log.Info("Sync ended")
+					l.log.Info(fmt.Sprintf("Sync ended. Latest block: %d, current block: %d", latestBlock, currentBlock))
 				}
 				isSync = false
 				continue

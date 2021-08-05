@@ -86,7 +86,7 @@ func Message(action, text string, m msg.Message, tx *types.Transaction, data []b
 		}
 	}
 
-	info(text, messageContext, ctx...)
+	Info(text, messageContext, ctx...)
 }
 
 func writeToGelf(text string, messageContext core.MessageContext, logLevel int32, ctx ...interface{}) {
@@ -109,7 +109,7 @@ func writeToGelf(text string, messageContext core.MessageContext, logLevel int32
 	}
 }
 
-func info(text string, messageContext core.MessageContext, ctx ...interface{}) {
+func Info(text string, messageContext core.MessageContext, ctx ...interface{}) {
 	writeToGelf(text, messageContext, gelf.LOG_INFO, ctx...)
 }
 
@@ -119,6 +119,10 @@ func Error(text string, messageContext core.MessageContext, ctx ...interface{}) 
 
 func Crit(text string, messageContext core.MessageContext, ctx ...interface{}) {
 	writeToGelf(text, messageContext, gelf.LOG_CRIT, ctx...)
+}
+
+func Warn(text string, messageContext core.MessageContext, ctx ...interface{}) {
+	writeToGelf(text, messageContext, gelf.LOG_WARNING, ctx...)
 }
 
 func newMessage(text string, ctx ...interface{}) *gelf.Message {
