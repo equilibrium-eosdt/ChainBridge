@@ -114,7 +114,7 @@ func (l *listener) pollBlocks() error {
 			}
 
 			if pollingInterval != 0 {
-				time.Sleep(l.cfg.pollingInterval)
+				time.Sleep(pollingInterval)
 			}
 
 			// No more retries, goto next block
