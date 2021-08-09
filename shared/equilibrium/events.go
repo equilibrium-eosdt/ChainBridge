@@ -315,3 +315,35 @@ type EventGensCrowdloanClaim struct {
 	Penalty Balance
 	Topics  []types.Hash
 }
+
+type EventEqDexOrderCreated struct {
+	Phase          types.Phase
+	SubaccountId   types.AccountID
+	OrderId        EqDexOrderId
+	Asset          AssetType
+	Amount         types.U128
+	Price          types.I64
+	Side           types.U8
+	CreatedAt      types.U64
+	ExpirationTime types.U64
+	Topics         []types.Hash
+}
+
+type EventEqDexOrderDeleted struct {
+	Phase     types.Phase
+	AccountId OptionAccountId
+	OrderId   EqDexOrderId
+	Asset     AssetType
+	Topics    []types.Hash
+}
+
+type EventEqDexMatch struct {
+	Phase        types.Phase
+	Asset        AssetType
+	TakerRest    types.U128
+	MakerPrice   types.I64
+	MakerOrderId EqDexOrderId
+	Maker        types.AccountID
+	Taker        types.AccountID
+	Topics       []types.Hash
+}

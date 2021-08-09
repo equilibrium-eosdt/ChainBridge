@@ -35,3 +35,10 @@ type PoolTokenIndex types.U32
 
 /// Represents Asset Id Inner type.
 type AssetIdInnerType types.U64
+
+type EqDexOrderId types.U64
+
+type OptionAccountId struct {
+	HasValue bool
+	AccountId types.AccountID
+}
