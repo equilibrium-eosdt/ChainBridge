@@ -6,25 +6,21 @@ if [[ -n "${BRIDGE_CONFIG}" ]]; then
     echo ${BRIDGE_CONFIG} > /etc/config.json
 fi
 
-KEY1N=$(cat /etc/config.json | jq '.chains[] | select(.id == "0") | .from')
-KEY1N="${KEY1N%\"}"
-KEY1N="${KEY1N#\"}"
-KEY1N="/etc/keys/${KEY1N}.key"
-
 if [[ -n "${KEY1}" ]]; then
-    echo ${KEY1} > ${KEY1N}
+    KEYFILE1="/etc/keys/$(echo ${KEY1} | jq -r .address).key"
+    echo ${KEY1} > ${KEYFILE1}
 fi
-
-KEY2N=$(cat /etc/config.json | jq '.chains[] | select(.id == "1") | .from')
-KEY2N="${KEY2N%\"}"
-KEY2N="${KEY2N#\"}"
-KEY2N="/etc/keys/${KEY2N}.key"
 
 if [[ -n "${KEY2}" ]]; then
-    echo ${KEY2} > ${KEY2N}
+    KEYFILE2="/etc/keys/$(echo ${KEY2} | jq -r .address).key"
+    echo ${KEY2} > ${KEYFILE2}
 fi
 
-#exec "$@"
+if [[ -n "${KEY3}" ]]; then
+    KEYFILE3="/etc/keys/$(echo ${KEY3} | jq -r .address).key"
+    echo ${KEY3} > ${KEYFILE3}
+fi
+
 script -q -c 'usr/bin/bridge --config /etc/config.json --keystore /etc/keys --blockstore ${BLOCKSTORE} --graylog ${GRAYLOG} ${PARAMS} --metrics --metricsPort 9880' << ENDDOC
 1
 1
