@@ -4,6 +4,7 @@
 package Context
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -26,8 +28,14 @@ var (
 	_ = event.NewSubscription
 )
 
+// ContextMetaData contains all meta data concerning the Context contract.
+var ContextMetaData = &bind.MetaData{
+	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]",
+}
+
 // ContextABI is the input ABI used to generate the binding from.
-const ContextABI = "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
+// Deprecated: Use ContextMetaData.ABI instead.
+var ContextABI = ContextMetaData.ABI
 
 // Context is an auto generated Go binding around an Ethereum contract.
 type Context struct {

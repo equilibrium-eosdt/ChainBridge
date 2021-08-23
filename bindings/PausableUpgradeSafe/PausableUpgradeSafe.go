@@ -4,6 +4,7 @@
 package PausableUpgradeSafe
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -26,20 +28,31 @@ var (
 	_ = event.NewSubscription
 )
 
+// PausableUpgradeSafeMetaData contains all meta data concerning the PausableUpgradeSafe contract.
+var PausableUpgradeSafeMetaData = &bind.MetaData{
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	Bin: "0x6080604052348015600f57600080fd5b50609a8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80635c975abb14602d575b600080fd5b6033604d565b604051808215151515815260200191505060405180910390f35b6000606560009054906101000a900460ff1690509056fea26469706673582212207ac17eb3e39a1780071cfc794380fbbf4c5f9520b90e0248c965a6381216934164736f6c63430006040033",
+}
+
 // PausableUpgradeSafeABI is the input ABI used to generate the binding from.
-const PausableUpgradeSafeABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
+// Deprecated: Use PausableUpgradeSafeMetaData.ABI instead.
+var PausableUpgradeSafeABI = PausableUpgradeSafeMetaData.ABI
 
 // PausableUpgradeSafeBin is the compiled bytecode used for deploying new contracts.
-var PausableUpgradeSafeBin = "0x6080604052348015600f57600080fd5b50609a8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80635c975abb14602d575b600080fd5b6033604d565b604051808215151515815260200191505060405180910390f35b6000606560009054906101000a900460ff1690509056fea26469706673582212207ac17eb3e39a1780071cfc794380fbbf4c5f9520b90e0248c965a6381216934164736f6c63430006040033"
+// Deprecated: Use PausableUpgradeSafeMetaData.Bin instead.
+var PausableUpgradeSafeBin = PausableUpgradeSafeMetaData.Bin
 
 // DeployPausableUpgradeSafe deploys a new Ethereum contract, binding an instance of PausableUpgradeSafe to it.
 func DeployPausableUpgradeSafe(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *PausableUpgradeSafe, error) {
-	parsed, err := abi.JSON(strings.NewReader(PausableUpgradeSafeABI))
+	parsed, err := PausableUpgradeSafeMetaData.GetAbi()
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
+	if parsed == nil {
+		return common.Address{}, nil, nil, errors.New("GetABI returned nil")
+	}
 
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(PausableUpgradeSafeBin), backend)
+	address, tx, contract, err := bind.DeployContract(auth, *parsed, common.FromHex(PausableUpgradeSafeBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}

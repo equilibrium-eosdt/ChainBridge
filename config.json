@@ -1,25 +1,33 @@
 {
+  "environment": "gens-testnet",
   "chains": [
     {
-      "name": "Equilibrium",
-      "type": "substrate",
-      "id": "1",
-      "endpoint": "ws://localhost:9944",
-      "from": "0x5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-      "opts": {}
-    },
-    {
-      "name": "ganache",
+      "name": "Rinkeby",
       "type": "ethereum",
       "id": "0",
-      "endpoint": "ws://localhost:8545",
-      "from": "0xff93B45308FD417dF303D6515aB04D9e89a750Ca",
+      "endpoint": "https://rinkeby.infura.io/v3/dde54595ca684373aed9a810e7b3d56f",
+      "from": "0x7651e15723e6d3f6CB580Ad8Ff257BFc4F5A80fA",
       "opts": {
-        "bridge": "0x6e8e0b8258D7fEf7D1c7bfc4D6131479Ba9D87E2",
-        "erc20Handler": "0x1093C71aaEC253238EE9D4e44711D76433C061ff",
-        "genericHandler": "0x05A57B542d564a1ED2e9c900472382fcb4a8B815",
+        "bridge": "0x57eaD6030148EdcC89d267E59c77F7eE39169ce1",
+        "erc20Handler": "0x759A21Ce0408080a6E82805C07AE4A2cE9765432",
+        "genericHandler": "0x1880af119f9E01A38da77BC33a1c763bd4F62333",
         "gasLimit": "8000000",
-        "maxGasPrice": "20000000"
+        "maxGasPrice": "20000000000"
+      }
+    },
+    {
+      "name": "BSC_Testnet",
+      "type": "ethereum",
+      "id": "2",
+      "endpoint": "https://scn1.equilab.io/bsc/testnet/rpc/",
+      "from": "0x0FD6daeB12F3fCf3e539944Caf2664DF6A4E72De",
+      "opts": {
+        "bridge": "0xe481A5C4f3118c9A0D978FCA81d992D1736e76fc",
+        "erc20Handler": "0xA1338C2d0963312A613BbA9D691Bf04Dd10e13f7",
+        "genericHandler": "0xe356d18FD1d19c3dcf112eB125db9af557dbfB31",
+        "gasLimit": "8000000",
+        "maxGasPrice": "10000000000",
+        "http": "true"
       }
     }
   ]
