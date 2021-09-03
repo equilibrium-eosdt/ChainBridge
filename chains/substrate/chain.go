@@ -26,10 +26,10 @@ package substrate
 import (
 	"github.com/ChainSafe/ChainBridge/config"
 	"github.com/ChainSafe/ChainBridge/shared/equilibrium"
+	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
 	"github.com/ChainSafe/chainbridge-utils/core"
 	"github.com/ChainSafe/chainbridge-utils/crypto/sr25519"
 	"github.com/ChainSafe/chainbridge-utils/keystore"
-	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
 	metricTypes "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 )
@@ -51,6 +51,9 @@ func InitializeChain(cfg *core.ChainConfig, logger equilibrium.TransferLogger, s
 	}
 
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
+
+	// Load block delay
+	blockDelay := parseBlockDelay(cfg)
 
 	// Attempt to load latest block
 	bs, err := config.NewBlockstore(cfg.BlockstorePath, cfg.Id, kp.Address())
@@ -87,7 +90,7 @@ func InitializeChain(cfg *core.ChainConfig, logger equilibrium.TransferLogger, s
 	}
 
 	// Setup listener & writer
-	l := NewListener(conn, cfg.Name, cfg.Id, startBlock, logger, bs, stop, sysErr, m)
+	l := NewListener(conn, cfg.Name, cfg.Id, startBlock, logger, bs, stop, sysErr, m, blockDelay)
 	w := NewWriter(conn, logger, sysErr, m)
 	return &Chain{
 		cfg:      cfg,

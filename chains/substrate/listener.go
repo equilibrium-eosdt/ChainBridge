@@ -36,14 +36,14 @@ type listener struct {
 	sysErr        chan<- error
 	latestBlock   metricTypes.LatestBlock
 	metrics       *metrics.ChainMetrics
+	blockDelay    *big.Int
 }
 
 // Frequency of polling for a new block
 var BlockRetryInterval = time.Second * 5
 var BlockRetryLimit = 5
-var BlockDelay = big.NewInt(10 * 60 * 2) // About 2 hours assuming block produced in 6 seconds
 
-func NewListener(conn *Connection, name string, id msg.ChainId, startBlock uint64, log equilibrium.TransferLogger, bs blockstore.Blockstorer, stop <-chan int, sysErr chan<- error, m *metrics.ChainMetrics) *listener {
+func NewListener(conn *Connection, name string, id msg.ChainId, startBlock uint64, log equilibrium.TransferLogger, bs blockstore.Blockstorer, stop <-chan int, sysErr chan<- error, m *metrics.ChainMetrics, blockDelay *big.Int) *listener {
 	return &listener{
 		name:          name,
 		chainId:       id,
@@ -56,6 +56,7 @@ func NewListener(conn *Connection, name string, id msg.ChainId, startBlock uint6
 		sysErr:        sysErr,
 		latestBlock:   metricTypes.LatestBlock{LastUpdated: time.Now()},
 		metrics:       m,
+		blockDelay:    blockDelay,
 	}
 }
 
@@ -143,7 +144,7 @@ func (l *listener) pollBlocks() error {
 			}
 
 			// Sleep if the difference is less than BlockDelay; (latest - current) < BlockDelay
-			if big.NewInt(0).Sub(new(big.Int).SetUint64(uint64(latestBlock)), new(big.Int).SetUint64(currentBlock)).Cmp(BlockDelay) == -1 {
+			if big.NewInt(0).Sub(new(big.Int).SetUint64(uint64(latestBlock)), new(big.Int).SetUint64(currentBlock)).Cmp(l.blockDelay) == -1 {
 				l.log.Debug("Block not ready, will retry", "target", currentBlock, "latest", latestBlock, "chain_id", l.chainId)
 				time.Sleep(BlockRetryInterval)
 				continue

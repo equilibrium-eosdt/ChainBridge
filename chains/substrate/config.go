@@ -4,6 +4,7 @@
 package substrate
 
 import (
+	"math/big"
 	"strconv"
 
 	"github.com/ChainSafe/chainbridge-utils/core"
@@ -18,4 +19,19 @@ func parseStartBlock(cfg *core.ChainConfig) uint64 {
 		return res
 	}
 	return 0
+}
+
+const DefaultBlockDelay = 10
+
+func parseBlockDelay(cfg *core.ChainConfig) *big.Int {
+	if blockDelay, ok := cfg.Opts["blockDelay"]; ok {
+		delay := big.NewInt(0)
+		_, pass := delay.SetString(blockDelay, 10)
+		if pass {
+			return delay
+		} else {
+			panic("unable to parse block delay")
+		}
+	}
+	return big.NewInt(DefaultBlockDelay)
 }
