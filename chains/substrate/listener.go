@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	"github.com/ChainSafe/ChainBridge/shared/equilibrium/metrics"
+	"github.com/ChainSafe/chainbridge-utils/blockstore"
 	metricTypes "github.com/ChainSafe/chainbridge-utils/metrics/types"
 	"github.com/ChainSafe/chainbridge-utils/msg"
 	"github.com/ChainSafe/log15"
@@ -41,6 +41,7 @@ type listener struct {
 // Frequency of polling for a new block
 var BlockRetryInterval = time.Second * 5
 var BlockRetryLimit = 5
+var BlockDelay = big.NewInt(10 * 60 * 2) // About 2 hours assuming block produced in 6 seconds
 
 func NewListener(conn *Connection, name string, id msg.ChainId, startBlock uint64, log equilibrium.TransferLogger, bs blockstore.Blockstorer, stop <-chan int, sysErr chan<- error, m *metrics.ChainMetrics) *listener {
 	return &listener{
@@ -135,13 +136,15 @@ func (l *listener) pollBlocks() error {
 				time.Sleep(BlockRetryInterval)
 				continue
 			}
+			latestBlock := finalizedHeader.Number
 
 			if l.metrics != nil {
-				l.metrics.LatestKnownBlock.Set(float64(finalizedHeader.Number))
+				l.metrics.LatestKnownBlock.Set(float64(latestBlock))
 			}
-			// Sleep if the block we want comes after the most recently finalized block
-			if currentBlock > uint64(finalizedHeader.Number) {
-				l.log.Trace("Block not yet finalized", "target", currentBlock, "latest", finalizedHeader.Number)
+
+			// Sleep if the difference is less than BlockDelay; (latest - current) < BlockDelay
+			if big.NewInt(0).Sub(new(big.Int).SetUint64(uint64(latestBlock)), new(big.Int).SetUint64(currentBlock)).Cmp(BlockDelay) == -1 {
+				l.log.Debug("Block not ready, will retry", "target", currentBlock, "latest", latestBlock, "chain_id", l.chainId)
 				time.Sleep(BlockRetryInterval)
 				continue
 			}
