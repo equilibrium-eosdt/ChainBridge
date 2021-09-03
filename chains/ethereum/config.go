@@ -18,6 +18,7 @@ import (
 
 const DefaultGasLimit = 6721975
 const DefaultGasPrice = 20000000000
+const DefaultBlockDelay = 10
 
 // Config encapsulates all necessary parameters in ethereum compatible forms
 type Config struct {
@@ -38,6 +39,7 @@ type Config struct {
 	startBlock             *big.Int
 	pollingInterval		   time.Duration
 	syncPollingInterval    time.Duration
+	blockDelay             *big.Int
 }
 
 // parseChainConfig uses a core.ChainConfig to construct a corresponding Config
@@ -61,6 +63,7 @@ func parseChainConfig(chainCfg *core.ChainConfig) (*Config, error) {
 		startBlock:             big.NewInt(0),
 		pollingInterval:        time.Millisecond * 2000,
 		syncPollingInterval:    time.Millisecond * 500,
+		blockDelay:             big.NewInt(DefaultBlockDelay),
 	}
 
 	if contract, ok := chainCfg.Opts["bridge"]; ok && contract != "" {
@@ -137,6 +140,17 @@ func parseChainConfig(chainCfg *core.ChainConfig) (*Config, error) {
 			delete(chainCfg.Opts, "syncPollingInterval")
 		} else {
 			return nil, errors.New("unable to parse sync polling interval")
+		}
+	}
+
+	if blockDelay, ok := chainCfg.Opts["blockDelay"]; ok {
+		delay := big.NewInt(0)
+		_, pass := delay.SetString(blockDelay, 10)
+		if pass {
+			config.blockDelay = delay
+			delete(chainCfg.Opts, "blockDelay")
+		} else {
+			return nil, errors.New("unable to parse block delay")
 		}
 	}
 

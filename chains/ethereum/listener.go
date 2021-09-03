@@ -28,7 +28,6 @@ import (
 	utils "github.com/ChainSafe/ChainBridge/shared/ethereum"
 )
 
-var BlockDelay = big.NewInt(10)
 var BlockRetryInterval = time.Second * 5
 var BlockRetryLimit = 5
 var ErrFatalPolling = errors.New("listener block polling failed")
@@ -96,6 +95,9 @@ func (l *listener) start() error {
 func (l *listener) pollBlocks() error {
 	l.log.Info(fmt.Sprintf("Polling Blocks for %s with interval %d and sync interval %d...", l.cfg.name, l.cfg.pollingInterval, l.cfg.syncPollingInterval))
 
+	var blockDelay = l.cfg.blockDelay
+	l.log.Info(fmt.Sprintf("BlockDelay is %d", blockDelay))
+
 	var currentBlock = l.cfg.startBlock
 	var retry = BlockRetryLimit
 	var isSync = true
@@ -138,7 +140,7 @@ func (l *listener) pollBlocks() error {
 			}
 
 			// Sleep if the difference is less than BlockDelay; (latest - current) < BlockDelay
-			if big.NewInt(0).Sub(latestBlock, currentBlock).Cmp(BlockDelay) == -1 {
+			if big.NewInt(0).Sub(latestBlock, currentBlock).Cmp(blockDelay) == -1 {
 				l.log.Debug("Block not ready, will retry", "target", currentBlock, "latest", latestBlock, "chain_id", l.cfg.id)
 				time.Sleep(BlockRetryInterval)
 				if isSync {
