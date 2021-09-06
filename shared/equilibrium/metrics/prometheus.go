@@ -52,6 +52,8 @@ func NewChainMetrics(chain string) *ChainMetrics {
 	prometheus.MustRegister(metrics.LatestKnownBlock)
 	prometheus.MustRegister(metrics.VotesSubmitted)
 	prometheus.MustRegister(metrics.LatestBlocksRequested)
+	prometheus.MustRegister(metrics.LatestBlockFailedRequests)
+	prometheus.MustRegister(metrics.CurrentBlockLag)
 
 	return metrics
 }
