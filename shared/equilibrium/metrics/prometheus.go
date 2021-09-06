@@ -38,7 +38,7 @@ func NewChainMetrics(chain string) *ChainMetrics {
 			Help: "Number of latest block requests performed by the chain's listener",
 		}),
 		LatestBlockFailedRequests: prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: fmt.Sprintf("%s_relay_errors_get_block", chain),
+			Name: fmt.Sprintf("%s_failed_latest_block_requests", chain),
 			Help: "Number of failed latest block requests",
 		}),
 		CurrentBlockLag: prometheus.NewGauge(prometheus.GaugeOpts{
