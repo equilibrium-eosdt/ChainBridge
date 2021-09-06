@@ -135,7 +135,7 @@ func (l *listener) pollBlocks() error {
 			if err != nil {
 				l.log.Error("Failed to fetch finalized header", "err", err)
 				if l.metrics != nil {
-					l.metrics.RelayErrorsGetBlock.Inc()
+					l.metrics.LatestBlockFailedRequests.Inc()
 				}
 				retry--
 				time.Sleep(BlockRetryInterval)
@@ -145,8 +145,8 @@ func (l *listener) pollBlocks() error {
 
 			if l.metrics != nil {
 				l.metrics.LatestKnownBlock.Set(float64(latestBlock))
-				latestMinusDelay := big.NewInt(0).Sub(new(big.Int).SetUint64(uint64(latestBlock)), l.blockDelay)
-				l.metrics.CurrentBlockLag.Set(float64(big.NewInt(0).Sub(latestMinusDelay, new(big.Int).SetUint64(currentBlock)).Int64()))
+				expectedCurrentBlock := big.NewInt(0).Sub(new(big.Int).SetUint64(uint64(latestBlock)), l.blockDelay)
+				l.metrics.CurrentBlockLag.Set(float64(big.NewInt(0).Sub(expectedCurrentBlock, new(big.Int).SetUint64(currentBlock)).Int64()))
 				l.metrics.LatestBlocksRequested.Inc()
 			}
 
@@ -163,7 +163,7 @@ func (l *listener) pollBlocks() error {
 				time.Sleep(BlockRetryInterval)
 				continue
 			} else if err != nil {
-				l.log.Error("Failed to query latest block", "block", currentBlock, "err", err)
+				l.log.Error("Failed to query current block", "block", currentBlock, "err", err)
 				retry--
 				time.Sleep(BlockRetryInterval)
 				continue
