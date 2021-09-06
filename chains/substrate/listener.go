@@ -109,6 +109,7 @@ var ErrBlockNotReady = errors.New("required result to be 32 bytes, but got 0")
 func (l *listener) pollBlocks() error {
 	var currentBlock = l.startBlock
 	var retry = BlockRetryLimit
+	l.log.Info(fmt.Sprintf("BlockDelay is %d", l.blockDelay), "chain_id", l.chainId)
 	for {
 		select {
 		case <-l.stop:

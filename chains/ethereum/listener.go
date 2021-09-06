@@ -93,10 +93,10 @@ func (l *listener) start() error {
 // Polling begins at the block defined in `l.cfg.startBlock`. Failed attempts to fetch the latest block or parse
 // a block will be retried up to BlockRetryLimit times before continuing to the next block.
 func (l *listener) pollBlocks() error {
-	l.log.Info(fmt.Sprintf("Polling Blocks for %s with interval %d and sync interval %d...", l.cfg.name, l.cfg.pollingInterval, l.cfg.syncPollingInterval))
+	l.log.Info(fmt.Sprintf("Polling Blocks for %s with interval %d and sync interval %d...", l.cfg.name, l.cfg.pollingInterval, l.cfg.syncPollingInterval), "chain_id", l.cfg.id)
 
 	var blockDelay = l.cfg.blockDelay
-	l.log.Info(fmt.Sprintf("BlockDelay is %d", blockDelay))
+	l.log.Info(fmt.Sprintf("BlockDelay is %d", blockDelay), "chain_id", l.cfg.id)
 
 	var currentBlock = l.cfg.startBlock
 	var retry = BlockRetryLimit
