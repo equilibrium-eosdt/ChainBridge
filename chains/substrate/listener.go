@@ -141,6 +141,8 @@ func (l *listener) pollBlocks() error {
 
 			if l.metrics != nil {
 				l.metrics.LatestKnownBlock.Set(float64(latestBlock))
+				l.metrics.CurrentBlockLag.Set(float64(uint64(latestBlock) - currentBlock))
+				l.metrics.LatestBlocksRequested.Inc()
 			}
 
 			// Sleep if the difference is less than BlockDelay; (latest - current) < BlockDelay
@@ -157,6 +159,9 @@ func (l *listener) pollBlocks() error {
 				continue
 			} else if err != nil {
 				l.log.Error("Failed to query latest block", "block", currentBlock, "err", err)
+				if l.metrics != nil {
+					l.metrics.RelayErrorsGetBlock.Inc()
+				}
 				retry--
 				time.Sleep(BlockRetryInterval)
 				continue
