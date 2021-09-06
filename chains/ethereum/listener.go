@@ -129,6 +129,9 @@ func (l *listener) pollBlocks() error {
 			latestBlock, err := l.conn.LatestBlock()
 			if err != nil {
 				l.log.Error("Unable to get latest block", "block", currentBlock, "err", err, "chain_id", l.cfg.id)
+				if l.metrics != nil {
+					l.metrics.RelayErrorsGetBlock.Inc()
+				}
 				retry--
 				time.Sleep(BlockRetryInterval)
 				continue
@@ -136,6 +139,8 @@ func (l *listener) pollBlocks() error {
 
 			if l.metrics != nil {
 				l.metrics.LatestKnownBlock.Set(float64(latestBlock.Int64()))
+				latestMinusDelay := big.NewInt(0).Sub(latestBlock, blockDelay)
+				l.metrics.CurrentBlockLag.Set(float64(big.NewInt(0).Sub(latestMinusDelay, currentBlock).Int64()))
 				l.metrics.LatestBlocksRequested.Inc()
 			}
 

@@ -11,6 +11,8 @@ type ChainMetrics struct {
 	LatestKnownBlock prometheus.Gauge
 	VotesSubmitted  prometheus.Counter
 	LatestBlocksRequested prometheus.Counter
+	RelayErrorsGetBlock   prometheus.Gauge
+	CurrentBlockLag       prometheus.Gauge
 }
 
 func NewChainMetrics(chain string) *ChainMetrics {
@@ -34,6 +36,14 @@ func NewChainMetrics(chain string) *ChainMetrics {
 		LatestBlocksRequested: prometheus.NewCounter(prometheus.CounterOpts{
 			Name: fmt.Sprintf("%s_latest_blocks_requested", chain),
 			Help: "Number of latest block requests performed by the chain's listener",
+		}),
+		RelayErrorsGetBlock: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: fmt.Sprintf("%s_relay_errors_get_block", chain),
+			Help: "Count relay get block errors",
+		}),
+		CurrentBlockLag: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: fmt.Sprintf("%s_current_block_lag", chain),
+			Help: "Current block lag size",
 		}),
 	}
 
