@@ -144,7 +144,8 @@ func (l *listener) pollBlocks() error {
 
 			if l.metrics != nil {
 				l.metrics.LatestKnownBlock.Set(float64(latestBlock))
-				l.metrics.CurrentBlockLag.Set(float64(big.NewInt(0).Sub(new(big.Int).SetUint64(uint64(latestBlock)), l.blockDelay).Int64()))
+				latestMinusDelay := big.NewInt(0).Sub(new(big.Int).SetUint64(uint64(latestBlock)), l.blockDelay)
+				l.metrics.CurrentBlockLag.Set(float64(big.NewInt(0).Sub(latestMinusDelay, new(big.Int).SetUint64(currentBlock)).Int64()))
 				l.metrics.LatestBlocksRequested.Inc()
 			}
 
