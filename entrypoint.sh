@@ -8,7 +8,7 @@ fi
 
 if [[ -n "${KEYSTORE_KEYS}" ]]; then
     chains_number="$(echo "${BRIDGE_CONFIG}" | jq -r '.chains | length')"
-    for chain_index in $(seq 1 "$chains_number")
+    for chain_index in $(seq 0 1 $(("$chains_number" - 1)))
     do
         address=$(echo "${BRIDGE_CONFIG}" | jq -r ".chains[${chain_index}].from")
         keyfile="/etc/keys/${address}.key"
