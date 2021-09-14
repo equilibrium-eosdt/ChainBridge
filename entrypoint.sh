@@ -31,9 +31,5 @@ else
     fi
 fi
 
-script -q -c 'usr/bin/bridge --config /etc/config.json --keystore /etc/keys --blockstore ${BLOCKSTORE} --graylog ${GRAYLOG} ${PARAMS} --metrics --metricsPort 9880' << ENDDOC
-1
-1
-1
-ENDDOC
+script -q -c 'usr/bin/bridge --config /etc/config.json --keystore /etc/keys --blockstore ${BLOCKSTORE} --graylog ${GRAYLOG} ${PARAMS} --metrics --metricsPort 9880'
 
