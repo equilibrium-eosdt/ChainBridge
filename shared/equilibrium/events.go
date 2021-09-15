@@ -221,7 +221,7 @@ type EventMultisigSudoFailed struct {
 	Topics   []types.Hash
 }
 
-type EventBridgeRemark struct {
+type EventEqBridgeRemark struct {
 	Phase  types.Phase
 	Hash   [32]types.Hash
 	Topics []types.Hash
@@ -346,4 +346,20 @@ type EventEqDexMatch struct {
 	Maker        types.AccountID
 	Taker        types.AccountID
 	Topics       []types.Hash
+}
+
+type EventEqBridgeFromBridgeTransfer struct {
+	Phase     types.Phase
+	AccountId types.AccountID
+	Asset     AssetType
+	Amount    Balance
+	Topics    []types.Hash
+}
+
+type EventEqBridgeToBridgeTransfer struct {
+	Phase     types.Phase
+	AccountId types.AccountID
+	Asset     AssetType
+	Amount    Balance
+	Topics    []types.Hash
 }

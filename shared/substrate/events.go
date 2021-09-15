@@ -181,7 +181,7 @@ type Events struct {
 	EqMultisigSudo_ProposalApproved                []equilibrium.EventMultisigSudoProposalApproved                  // nolint:stylecheck,golint
 	EqMultisigSudo_MultisigSudid                   []equilibrium.EventMultisigSudoSudid                             // nolint:stylecheck,golint
 	EqMultisigSudo_SudoFailed                      []equilibrium.EventMultisigSudoFailed                            // nolint:stylecheck,golint
-	EqBridge_Remark                                []equilibrium.EventBridgeRemark                                  // nolint:stylecheck,golint
+	EqBridge_Remark                                []equilibrium.EventEqBridgeRemark                                // nolint:stylecheck,golint
 	CurveDistribution_CurveAdminFeesDistributed    []equilibrium.EventCurveDistributionCurveAdminFeesDistributed    // nolint:stylecheck,golint
 	CurveAmm_CreatePool                            []equilibrium.EventCurveAmmCreatePool                            // nolint:stylecheck,golint
 	CurveAmm_AddLiquidity                          []equilibrium.EventCurveAmmAddLiquidity                          // nolint:stylecheck,golint
@@ -194,4 +194,6 @@ type Events struct {
 	EqDex_OrderCreated                             []equilibrium.EventEqDexOrderCreated                             // nolint:stylecheck,golint
 	EqDex_OrderDeleted                             []equilibrium.EventEqDexOrderDeleted                             // nolint:stylecheck,golint
 	EqDex_Match                                    []equilibrium.EventEqDexMatch                                    // nolint:stylecheck,golint
+	EqBridge_FromBridgeTransfer                    []equilibrium.EventEqBridgeFromBridgeTransfer                    // nolint:stylecheck,golint
+	EqBridge_ToBridgeTransfer                      []equilibrium.EventEqBridgeToBridgeTransfer                      // nolint:stylecheck,golint
 }
