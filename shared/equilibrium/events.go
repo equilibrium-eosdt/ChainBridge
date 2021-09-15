@@ -363,3 +363,10 @@ type EventEqBridgeToBridgeTransfer struct {
 	Amount    Balance
 	Topics    []types.Hash
 }
+
+type ChainBridgeFeeChanged struct {
+	Phase     types.Phase
+	ChainId   types.U8
+	Fee       Balance
+	Topics    []types.Hash
+}
