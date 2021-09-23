@@ -166,6 +166,13 @@ type EventDeleteAsset struct {
 	Topics    []types.Hash
 }
 
+type EventUpdateAsset struct {
+	Phase     types.Phase
+	Asset     types.U64
+	AssetName []types.U8
+	Topics    []types.Hash
+}
+
 type EventMultisigSudoInitialized struct {
 	Phase  types.Phase
 	Topics []types.Hash

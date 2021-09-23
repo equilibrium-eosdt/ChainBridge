@@ -172,6 +172,7 @@ type Events struct {
 	EqMarginCall_MarginCallExecuted                []equilibrium.EventMarginCallExecuted                            // nolint:stylecheck,golint
 	EqAssets_NewAsset                              []equilibrium.EventNewAsset                                      // nolint:stylecheck,golint
 	EqAssets_DeleteAsset                           []equilibrium.EventDeleteAsset                                   // nolint:stylecheck,golint
+	EqAssets_UpdateAsset                           []equilibrium.EventUpdateAsset                                   // nolint:stylecheck,golint
 	EqMultisigSudo_Initialized                     []equilibrium.EventMultisigSudoInitialized                       // nolint:stylecheck,golint
 	EqMultisigSudo_KeyAdded                        []equilibrium.EventMultisigSudoKeyAdded                          // nolint:stylecheck,golint
 	EqMultisigSudo_KeyRemoved                      []equilibrium.EventMultisigSudoKeyRemoved                        // nolint:stylecheck,golint
