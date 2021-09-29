@@ -371,6 +371,7 @@ type EventEqDexMatch struct {
 	MakerFee     Balance
 	TakerFee     Balance
 	Amount       types.U128
+	Side         types.U8
 	Topics       []types.Hash
 }
 
