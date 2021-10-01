@@ -53,6 +53,22 @@ type EventBalancesExchange struct {
 	Topics   []types.Hash
 }
 
+type EventBalancesDeposit struct {
+	Phase 	types.Phase
+	Account types.AccountID
+	Asset 	AssetType
+	Amount 	Balance
+	Topics  []types.Hash
+}
+
+type EventBalancesWithdraw struct {
+	Phase 	types.Phase
+	Account types.AccountID
+	Asset 	AssetType
+	Amount 	Balance
+	Topics  []types.Hash
+}
+
 type EventOracleNewPrice struct {
 	Phase     types.Phase
 	Asset     AssetType

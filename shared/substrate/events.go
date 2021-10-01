@@ -153,6 +153,8 @@ type Events struct {
 	EqBalances_Transfer                            []equilibrium.EventBalancesTransfer                              // nolint:stylecheck,golint
 	EqBalances_DeleteAccount                       []equilibrium.EventBalancesDeleteAccount                         // nolint:stylecheck,golint
 	EqBalances_Exchange                            []equilibrium.EventBalancesExchange                              // nolint:stylecheck,golint
+	EqBalances_Deposit                             []equilibrium.EventBalancesDeposit                            	// nolint:stylecheck,golint
+	EqBalances_Withdraw                            []equilibrium.EventBalancesWithdraw                              // nolint:stylecheck,golint
 	Oracle_NewPrice                                []equilibrium.EventOracleNewPrice                                // nolint:stylecheck,golint
 	Subaccounts_SubaccountCreated                  []equilibrium.EventSubaccountsSubaccountCreated                  // nolint:stylecheck,golint
 	Subaccounts_RegisterBailsman                   []equilibrium.EventSubaccountsRegisterBailsman                   // nolint:stylecheck,golint
