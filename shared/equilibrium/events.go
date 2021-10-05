@@ -354,7 +354,7 @@ type EventEqDexOrderCreated struct {
 
 type EventEqDexOrderDeleted struct {
 	Phase     types.Phase
-	AccountId OptionAccountId
+	AccountId types.OptionH256
 	OrderId   EqDexOrderId
 	Asset     AssetType
 	Topics    []types.Hash

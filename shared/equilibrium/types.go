@@ -37,8 +37,3 @@ type PoolTokenIndex types.U32
 type AssetIdInnerType types.U64
 
 type EqDexOrderId types.U64
-
-type OptionAccountId struct {
-	HasValue bool
-	AccountId types.AccountID
-}
