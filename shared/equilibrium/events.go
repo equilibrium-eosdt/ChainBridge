@@ -368,6 +368,9 @@ type EventEqDexMatch struct {
 	MakerOrderId EqDexOrderId
 	Maker        types.AccountID
 	Taker        types.AccountID
+	MakerFee     Balance
+	TakerFee     Balance
+	Amount       types.U128
 	Topics       []types.Hash
 }
 
