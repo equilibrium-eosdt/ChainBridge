@@ -339,6 +339,31 @@ type EventGensCrowdloanClaim struct {
 	Topics  []types.Hash
 }
 
+type EventGensOptOutSold struct {
+	Phase           types.Phase
+	Who             types.AccountID
+	Allocation      Balance
+	TransferAmount  Balance
+	Topics          []types.Hash
+}
+
+type EventGensOptOutBought struct {
+	Phase   types.Phase
+	Who     types.AccountID
+	Added   Balance
+	Total   Balance
+	Topics  []types.Hash
+}
+
+type EventGensOptOutDistributed struct {
+	Phase   types.Phase
+	Who     types.AccountID
+	Asset   AssetType
+	Amount  Balance
+	Price   Balance
+	Topics  []types.Hash
+}
+
 type EventEqDexOrderCreated struct {
 	Phase          types.Phase
 	SubaccountId   types.AccountID
