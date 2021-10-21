@@ -194,9 +194,9 @@ type Events struct {
 	CurveAmm_RemoveLiquidityOne                    []equilibrium.EventCurveAmmRemoveLiquidityOne                    // nolint:stylecheck,golint
 	CurveAmm_WithdrawAdminFees                     []equilibrium.EventCurveAmmWithdrawAdminFees                     // nolint:stylecheck,golint
 	GensCrowdloan_Claim                            []equilibrium.EventGensCrowdloanClaim                            // nolint:stylecheck,golint
-	GensOptOut_Sold								   []equilibrium.EventGensOptOutSold								// nolint:stylecheck,golint
-	GensOptOut_Bought							   []equilibrium.EventGensOptOutBought								// nolint:stylecheck,golint
-	GensOptOut_Distributed						   []equilibrium.EventGensOptOutDistributed							// nolint:stylecheck,golint
+	GensOptOut_Sold                                []equilibrium.EventGensOptOutSold                                // nolint:stylecheck,golint
+	GensOptOut_Bought                              []equilibrium.EventGensOptOutBought                              // nolint:stylecheck,golint
+	GensOptOut_Distributed                         []equilibrium.EventGensOptOutDistributed                         // nolint:stylecheck,golint
 	EqDex_OrderCreated                             []equilibrium.EventEqDexOrderCreated                             // nolint:stylecheck,golint
 	EqDex_OrderDeleted                             []equilibrium.EventEqDexOrderDeleted                             // nolint:stylecheck,golint
 	EqDex_Match                                    []equilibrium.EventEqDexMatch                                    // nolint:stylecheck,golint
