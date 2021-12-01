@@ -422,3 +422,7 @@ type ChainBridgeFeeChanged struct {
 	Fee       Balance
 	Topics    []types.Hash
 }
+
+type ChainBridgeProposalLifetimeChanged struct {
+	Lifetime  types.Block
+}

@@ -37,3 +37,6 @@ type PoolTokenIndex types.U32
 type AssetIdInnerType types.U64
 
 type EqDexOrderId types.U64
+
+/// Represents Block Number type.
+type BlockNumber types.U64
