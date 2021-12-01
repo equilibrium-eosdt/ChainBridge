@@ -424,5 +424,5 @@ type ChainBridgeFeeChanged struct {
 }
 
 type ChainBridgeProposalLifetimeChanged struct {
-	Lifetime  types.Block
+	Lifetime  types.BlockNumber
 }
