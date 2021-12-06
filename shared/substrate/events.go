@@ -204,5 +204,5 @@ type Events struct {
 	EqBridge_ToBridgeTransfer                      []equilibrium.EventEqBridgeToBridgeTransfer                      // nolint:stylecheck,golint
 	ChainBridge_FeeChanged                         []equilibrium.ChainBridgeFeeChanged                              // nolint:stylecheck,golint
 	ChainBridge_ProposalLifetimeChanged            []equilibrium.ChainBridgeProposalLifetimeChanged                 // nolint:stylecheck,golint
-	ChainBridgeTransfersAllowabilityChanged        []equilibrium.ChainBridgeTransfersAllowabilityChanged            // nolint:stylecheck,golint
+	ChainBridgeChainToggled                        []equilibrium.ChainBridgeChainToggled                            // nolint:stylecheck,golint
 }

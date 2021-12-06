@@ -429,9 +429,9 @@ type ChainBridgeProposalLifetimeChanged struct {
 	Topics    []types.Hash
 }
 
-type ChainBridgeTransfersAllowabilityChanged struct {
+type ChainBridgeChainToggled struct {
 	Phase     types.Phase
 	ChainId   types.U8
-	Allowed   types.Bool
+	Enabled   types.Bool
 	Topics    []types.Hash
 }
