@@ -428,3 +428,10 @@ type ChainBridgeProposalLifetimeChanged struct {
 	Lifetime  BlockNumber
 	Topics    []types.Hash
 }
+
+type ChainBridgeChainToggled struct {
+	Phase     types.Phase
+	ChainId   types.U8
+	Enabled   types.Bool
+	Topics    []types.Hash
+}
