@@ -3,7 +3,7 @@
 set -e
 
 if [[ -n "${BRIDGE_CONFIG}" ]]; then
-    echo "${BRIDGE_CONFIG}" > /etc/config.json
+    echo "${BRIDGE_CONFIG}" | jq 'del(.chains[].opts.types)' > /etc/config.json
 fi
 
 if [[ -n "${KEYSTORE_KEYS}" ]]; then
