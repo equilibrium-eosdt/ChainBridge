@@ -54,18 +54,18 @@ type EventBalancesExchange struct {
 }
 
 type EventBalancesDeposit struct {
-	Phase   types.Phase
+	Phase 	types.Phase
 	Account types.AccountID
-	Asset   AssetType
-	Amount  Balance
+	Asset 	AssetType
+	Amount 	Balance
 	Topics  []types.Hash
 }
 
 type EventBalancesWithdraw struct {
-	Phase   types.Phase
+	Phase 	types.Phase
 	Account types.AccountID
-	Asset   AssetType
-	Amount  Balance
+	Asset 	AssetType
+	Amount 	Balance
 	Topics  []types.Hash
 }
 
@@ -233,10 +233,10 @@ type EventMultisigSudoProposalApproved struct {
 }
 
 type EventMultisigSudoSudid struct {
-	Phase          types.Phase
-	CallHash       [32]types.U8
+	Phase    types.Phase
+	CallHash [32]types.U8
 	DispatchResult types.DispatchResult
-	Topics         []types.Hash
+	Topics   []types.Hash
 }
 
 type EventMultisigSudoFailed struct {
@@ -267,15 +267,15 @@ type EventCurveAmmCreatePool struct {
 }
 
 type EventCurveAmmAddLiquidity struct {
-	Phase        types.Phase
-	Provider     types.AccountID
-	PoolId       PoolId
-	TokenAmount  []Balance
-	Fees         []Balance
-	Invariant    Balance
-	TokenSupply  Balance
+	Phase       types.Phase
+	Provider    types.AccountID
+	PoolId      PoolId
+	TokenAmount []Balance
+	Fees        []Balance
+	Invariant   Balance
+	TokenSupply Balance
 	MintedAmount Balance
-	Topics       []types.Hash
+	Topics      []types.Hash
 }
 
 type EventCurveAmmTokenExchange struct {
@@ -286,7 +286,7 @@ type EventCurveAmmTokenExchange struct {
 	SendCoinExchangedAmount     Balance
 	ReceivedCoinIndex           PoolTokenIndex
 	ReceivedCoinExchangedAmount Balance
-	Fee                         Balance
+	Fee 						Balance
 	Topics                      []types.Hash
 }
 
@@ -320,7 +320,7 @@ type EventCurveAmmRemoveLiquidityOne struct {
 	BurnedTokenIndex    PoolTokenIndex
 	CoinExchangedAmount Balance
 	NewTokenSupply      Balance
-	Fee                 Balance
+	Fee			        Balance
 	Topics              []types.Hash
 }
 
@@ -341,28 +341,28 @@ type EventGensCrowdloanClaim struct {
 }
 
 type EventGensOptOutSold struct {
-	Phase          types.Phase
-	Who            types.AccountID
-	Allocation     Balance
-	TransferAmount Balance
-	Topics         []types.Hash
+	Phase           types.Phase
+	Who             types.AccountID
+	Allocation      Balance
+	TransferAmount  Balance
+	Topics          []types.Hash
 }
 
 type EventGensOptOutBought struct {
-	Phase  types.Phase
-	Who    types.AccountID
-	Added  Balance
-	Total  Balance
-	Topics []types.Hash
+	Phase   types.Phase
+	Who     types.AccountID
+	Added   Balance
+	Total   Balance
+	Topics  []types.Hash
 }
 
 type EventGensOptOutDistributed struct {
-	Phase  types.Phase
-	Who    types.AccountID
-	Asset  AssetType
-	Amount Balance
-	Price  Balance
-	Topics []types.Hash
+	Phase   types.Phase
+	Who     types.AccountID
+	Asset   AssetType
+	Amount  Balance
+	Price   Balance
+	Topics  []types.Hash
 }
 
 type EventEqDexOrderCreated struct {
@@ -418,21 +418,21 @@ type EventEqBridgeToBridgeTransfer struct {
 }
 
 type ChainBridgeFeeChanged struct {
-	Phase   types.Phase
-	ChainId types.U8
-	Fee     Balance
-	Topics  []types.Hash
+	Phase     types.Phase
+	ChainId   types.U8
+	Fee       Balance
+	Topics    []types.Hash
 }
 
 type ChainBridgeProposalLifetimeChanged struct {
-	Phase    types.Phase
-	Lifetime BlockNumber
-	Topics   []types.Hash
+	Phase     types.Phase
+	Lifetime  BlockNumber
+	Topics    []types.Hash
 }
 
 type ChainBridgeChainToggled struct {
-	Phase   types.Phase
-	ChainId types.U8
-	Enabled types.Bool
-	Topics  []types.Hash
+	Phase     types.Phase
+	ChainId   types.U8
+	Enabled   types.Bool
+	Topics    []types.Hash
 }
