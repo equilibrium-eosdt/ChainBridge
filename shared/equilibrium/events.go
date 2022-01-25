@@ -235,6 +235,7 @@ type EventMultisigSudoProposalApproved struct {
 type EventMultisigSudoSudid struct {
 	Phase    types.Phase
 	CallHash [32]types.U8
+	DispatchResult types.DispatchResult
 	Topics   []types.Hash
 }
 
