@@ -202,6 +202,7 @@ type Events struct {
 	EqDex_Match                                    []equilibrium.EventEqDexMatch                                    // nolint:stylecheck,golint
 	EqBridge_FromBridgeTransfer                    []equilibrium.EventEqBridgeFromBridgeTransfer                    // nolint:stylecheck,golint
 	EqBridge_ToBridgeTransfer                      []equilibrium.EventEqBridgeToBridgeTransfer                      // nolint:stylecheck,golint
+	EqBridge_MinimumTransferAmountChanged          []equilibrium.EventEqBridgeMinimumTransferAmountChanged          // nolint:stylecheck,golint
 	ChainBridge_FeeChanged                         []equilibrium.ChainBridgeFeeChanged                              // nolint:stylecheck,golint
 	ChainBridge_ProposalLifetimeChanged            []equilibrium.ChainBridgeProposalLifetimeChanged                 // nolint:stylecheck,golint
 	ChainBridge_ChainToggled                       []equilibrium.ChainBridgeChainToggled                            // nolint:stylecheck,golint
