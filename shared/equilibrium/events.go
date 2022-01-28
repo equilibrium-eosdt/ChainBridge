@@ -417,6 +417,14 @@ type EventEqBridgeToBridgeTransfer struct {
 	Topics    []types.Hash
 }
 
+type EventEqBridgeMinimumTransferAmountChanged struct {
+	Phase        types.Phase
+	ChainId      types.U8
+	ResourceId   types.Bytes32
+	Balance      Balance
+	Topics       []types.Hash
+}
+
 type ChainBridgeFeeChanged struct {
 	Phase     types.Phase
 	ChainId   types.U8
